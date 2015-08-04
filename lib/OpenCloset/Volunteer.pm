@@ -81,6 +81,7 @@ sub _public_routes {
     $work->get('/')->to('work#work')->name('work');
     $work->get('/edit')->to('work#edit')->name('work.edit');
     $work->post('/')->to('work#update')->name('work.update');
+    $work->put('/status')->to('work#update_status');
 }
 
 sub _private_routes { }

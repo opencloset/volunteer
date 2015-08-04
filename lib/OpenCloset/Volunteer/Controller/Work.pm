@@ -188,6 +188,56 @@ sub update {
     $self->render( 'work/done', work => $work );
 }
 
+=head2 update_status
+
+    PUT /works/:id/status?status=reported|approved|done|canceled
+
+=cut
+
+sub update_status {
+    my $self      = shift;
+    my $work      = $self->stash('work');
+    my $volunteer = $work->volunteer;
+
+    my $validation = $self->validation;
+    $validation->required('status')->in(qw/reported approved done canceled/);
+    return $self->error( 400, 'Parameter Validation Failed' ) if $validation->has_error;
+
+    my $status = $validation->param('status');
+    $work->update( { status => $status } );
+
+    my $sender = $self->app->sms_sender;
+    if ( $status eq 'approved' ) {
+        my $phone = $volunteer->phone;
+        my $msg = $self->render_to_string( 'work/status-approved', format => 'txt', work => $work );
+        chomp $msg;
+        my $sent = $sender->send_sms( text => $msg, to => $phone );
+        $self->log->error("Failed to send SMS: $msg") unless $sent;
+
+        $msg = $self->render_to_string( 'work/opencloset-location', format => 'txt' );
+        $sent = $sender->send_sms( text => $msg, to => $phone );
+        $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
+
+        ## Google Calendar
+        my $volunteer = $work->volunteer;
+        my $from      = $work->activity_from_date;
+        my $to        = $work->activity_to_date;
+        my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
+            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        $self->log->debug($text);
+        $self->quickAdd("$text");
+    }
+    elsif ( $status eq 'done' ) {
+        ## 방명록작성안내문자
+        my $phone = $volunteer->phone;
+        my $msg   = $self->render_to_string( 'work/opencloset-done', format => 'txt' );
+        my $sent  = $sender->send_sms( text => $msg, to => $phone );
+        $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
+    }
+
+    $self->render( json => { $work->get_columns } );
+}
+
 sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
