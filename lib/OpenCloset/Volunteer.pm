@@ -39,11 +39,29 @@ sub _assets {
     my $self = shift;
 
     $self->plugin('AssetPack');
+    $self->defaults( js => 'default.js', css => 'screen.css' );
     $self->asset( 'screen.css' => '/assets/scss/screen.scss' );
     $self->asset(
         'bundle.js' => qw{/assets/components/jquery/dist/jquery.js
             /assets/components/bootstrap/dist/js/bootstrap.js
             /assets/components/underscore/underscore.js}
+    );
+    $self->asset( 'default.js' => $self->asset->get('bundle.js') );
+    $self->asset(
+        'datepicker.js' =>
+            qw{/assets/components/bootstrap-datepicker/js/bootstrap-datepicker.js
+            /assets/components/bootstrap-datepicker/js/locales/bootstrap-datepicker.kr.js}
+    );
+    $self->asset(
+        'work-add.js' => $self->asset->get('bundle.js'),
+        $self->asset->get('datepicker.js'),
+        qw{/assets/components/jQuery-Mask-Plugin/dist/jquery.mask.js
+            /assets/coffee/work-add.coffee}
+    );
+    $self->asset(
+        'work-add.css' =>
+            '/assets/components/bootstrap-datepicker/css/datepicker3.css',
+        $self->asset->get('screen.css')
     );
 }
 
