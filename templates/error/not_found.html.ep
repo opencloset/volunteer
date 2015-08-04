@@ -3,7 +3,7 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
-    <h2><%= $status %> Error <small>Bad Request</small></h2>
+    <h2><%= $status %> Error <small>Not Found</small></h2>
     <hr class="colorgraph">
     <p><%= $error %></p>
   </div>
