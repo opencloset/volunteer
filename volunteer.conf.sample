@@ -1,3 +1,5 @@
+my $SMS_FROM = '07043257521';
+
 {
     database => {
         dsn => $ENV{OPENCLOSET_DATABASE_DSN}
@@ -5,10 +7,25 @@
         name => $ENV{OPENCLOSET_DATABASE_NAME} || 'opencloset',
         user => $ENV{OPENCLOSET_DATABASE_USER} || 'opencloset',
         pass => $ENV{OPENCLOSET_DATABASE_PASS} // 'opencloset',
-        quote_char        => q{`},
-        mysql_enable_utf8 => 1,
-        on_connect_do     => 'SET NAMES utf8',
-        RaiseError        => 1,
-        AutoCommit        => 1,
+        opts => {
+            quote_char        => q{`},
+            mysql_enable_utf8 => 1,
+            on_connect_do     => 'SET NAMES utf8',
+            RaiseError        => 1,
+            AutoCommit        => 1,
+        },
+    },
+    sms => {
+        driver        => 'KR::APIStore',
+        'KR::CoolSMS' => {
+            _api_key    => $ENV{OPENCLOSET_COOLSMS_API_KEY}    || q{},
+            _api_secret => $ENV{OPENCLOSET_COOLSMS_API_SECRET} || q{},
+            _from       => $SMS_FROM,
+        },
+        'KR::APIStore' => {
+            _id            => $ENV{OPENCLOSET_APISTORE_ID}            || q{},
+            _api_store_key => $ENV{OPENCLOSET_APISTORE_API_STORE_KEY} || q{},
+            _from          => $SMS_FROM,
+        },
     },
 };

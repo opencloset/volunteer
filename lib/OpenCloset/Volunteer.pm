@@ -1,18 +1,30 @@
 package OpenCloset::Volunteer;
 use Mojo::Base 'Mojolicious';
 
+use SMS::Send::KR::APIStore;
+use SMS::Send::KR::CoolSMS;
+use SMS::Send;
+
 use OpenCloset::Schema;
 
 has schema => sub {
     my $self = shift;
+    my $conf = $self->config->{database};
     OpenCloset::Schema->connect(
         {
-            dsn      => $self->config->{database}{dsn},
-            user     => $self->config->{database}{user},
-            password => $self->config->{database}{pass},
-            %{ $self->config->{database}{opts} },
+            dsn      => $conf->{dsn},
+            user     => $conf->{user},
+            password => $conf->{pass},
+            %{ $conf->{opts} },
         }
     );
+};
+
+has sms_sender => sub {
+    my $self   = shift;
+    my $config = $self->config;
+    SMS::Send->new( $config->{sms}{driver},
+        %{ $config->{sms}{ $config->{sms}{driver} } } );
 };
 
 =head1 METHODS
