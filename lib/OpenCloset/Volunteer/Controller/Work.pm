@@ -36,28 +36,22 @@ sub create {
     my $birth_date    = $v->param('birth_date');
     my $phone         = $v->param('phone');
     my $address       = $v->param('address');
-    my $from       = sprintf '%02s', $v->param('activity_hour_from') || '00';
-    my $to         = sprintf '%02s', $v->param('activity_hour_to') || '00';
-    my $period     = $v->param('period');
-    my $comment    = $v->param('comment');
-    my $reasons    = $v->every_param('reason');
-    my $paths      = $v->every_param('path');
-    my $activities = $v->every_param('activity');
+    my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
+    my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
+    my $period        = $v->param('period');
+    my $comment       = $v->param('comment');
+    my $reasons       = $v->every_param('reason');
+    my $paths         = $v->every_param('path');
+    my $activities    = $v->every_param('activity');
 
     my $schema = $self->schema;
 
-    my $volunteer = $schema->resultset('Volunteer')->find_or_create(
-        {
-            name       => $name,
-            email      => $email,
-            phone      => $phone,
-            address    => $address,
-            birth_date => $birth_date
-        }
-    );
+    my $volunteer
+        = $schema->resultset('Volunteer')
+        ->find_or_create(
+        { name => $name, email => $email, phone => $phone, address => $address, birth_date => $birth_date } );
 
-    return $self->error( 500, 'Failed to find or create Volunteer' )
-        unless $volunteer;
+    return $self->error( 500, 'Failed to find or create Volunteer' ) unless $volunteer;
 
     my $work = $schema->resultset('VolunteerWork')->create(
         {
@@ -69,7 +63,7 @@ sub create {
             path               => join( '|', @$paths ),
             activity           => join( '|', @$activities ),
             comment            => $comment,
-            authcode => String::Random->new->randregex('[a-zA-Z0-9]{32}')
+            authcode           => String::Random->new->randregex('[a-zA-Z0-9]{32}')
         }
     );
 
@@ -77,11 +71,7 @@ sub create {
 
     ## SMS
     my $sender = $self->app->sms_sender;
-    my $msg    = $self->render_to_string(
-        'work/status-reported',
-        format => 'txt',
-        work   => $work
-    );
+    my $msg = $self->render_to_string( 'work/status-reported', format => 'txt', work => $work );
     chomp $msg;
     my $sent = $sender->send_sms( text => $msg, to => $phone );
     $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
@@ -120,7 +110,7 @@ sub work {
     my $work = $self->stash('work');
 
     my $volunteer = $work->volunteer;
-    my $works = $volunteer->volunteer_works( { id => { '!=' => $work->id } } );
+    my $works     = $volunteer->volunteer_works( { id => { '!=' => $work->id } } );
     my $guestbook = $work->volunteer_guestbooks->next;
 
     $self->render( works => [$works->all], guestbook => $guestbook );

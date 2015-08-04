@@ -11,20 +11,13 @@ has schema => sub {
     my $self = shift;
     my $conf = $self->config->{database};
     OpenCloset::Schema->connect(
-        {
-            dsn      => $conf->{dsn},
-            user     => $conf->{user},
-            password => $conf->{pass},
-            %{ $conf->{opts} },
-        }
-    );
+        { dsn => $conf->{dsn}, user => $conf->{user}, password => $conf->{pass}, %{ $conf->{opts} }, } );
 };
 
 has sms_sender => sub {
     my $self   = shift;
     my $config = $self->config;
-    SMS::Send->new( $config->{sms}{driver},
-        %{ $config->{sms}{ $config->{sms}{driver} } } );
+    SMS::Send->new( $config->{sms}{driver}, %{ $config->{sms}{ $config->{sms}{driver} } } );
 };
 
 =head1 METHODS
@@ -61,19 +54,16 @@ sub _assets {
     );
     $self->asset( 'default.js' => $self->asset->get('bundle.js') );
     $self->asset(
-        'datepicker.js' =>
-            qw{/assets/components/bootstrap-datepicker/js/bootstrap-datepicker.js
+        'datepicker.js' => qw{/assets/components/bootstrap-datepicker/js/bootstrap-datepicker.js
             /assets/components/bootstrap-datepicker/js/locales/bootstrap-datepicker.kr.js}
     );
     $self->asset(
         'work-add.js' => $self->asset->get('bundle.js'),
-        $self->asset->get('datepicker.js'),
-        qw{/assets/components/jQuery-Mask-Plugin/dist/jquery.mask.js
+        $self->asset->get('datepicker.js'), qw{/assets/components/jQuery-Mask-Plugin/dist/jquery.mask.js
             /assets/coffee/work-add.coffee}
     );
     $self->asset(
-        'work-add.css' =>
-            '/assets/components/bootstrap-datepicker/css/datepicker3.css',
+        'work-add.css' => '/assets/components/bootstrap-datepicker/css/datepicker3.css',
         $self->asset->get('screen.css')
     );
 }
