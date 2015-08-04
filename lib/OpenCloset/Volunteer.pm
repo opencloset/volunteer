@@ -27,6 +27,7 @@ sub startup {
     my $self = shift;
 
     $self->plugin('Config');
+    $self->plugin('OpenCloset::Plugin::Helpers');
     $self->secrets( [$ENV{VOLUNTEER_SECRET} || time] );
     $self->sessions->default_expiration(86400);
 
