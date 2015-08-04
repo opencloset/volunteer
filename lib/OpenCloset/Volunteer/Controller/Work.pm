@@ -118,7 +118,7 @@ sub work {
 
 =head2 edit
 
-    # edit
+    # work.edit
     GET /works/:id/edit
 
 =cut
@@ -143,6 +143,49 @@ sub edit {
     $filled{activity_hour_to}   = sprintf '%02d', $to->hour;
     $filled{birth_date}         = $volunteer->birth_date->ymd;
     $self->render_fillinform( \%filled );
+}
+
+=head2 update
+
+    # work.update
+    POST /works/:id
+
+=cut
+
+sub update {
+    my $self      = shift;
+    my $authcode  = $self->param('authcode') || '';
+    my $work      = $self->stash('work');
+    my $volunteer = $work->volunteer;
+
+    return $self->render( 400, error => 'Wrong authcode' ) if $authcode ne $work->authcode;
+
+    my $v = $self->validation;
+    $self->_validate_volunteer_work($v);
+    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+
+    my $activity_date = $v->param('activity_date');
+    my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
+    my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
+    my $period        = $v->param('period');
+    my $comment       = $v->param('comment');
+    my $reasons       = $v->every_param('reason');
+    my $paths         = $v->every_param('path');
+    my $activities    = $v->every_param('activity');
+
+    $work->update(
+        {
+            activity_from_date => "$activity_date $from:00:00",
+            activity_to_date   => "$activity_date $to:00:00",
+            period             => $period,
+            reason             => join( '|', @$reasons ),
+            path               => join( '|', @$paths ),
+            activity           => join( '|', @$activities ),
+            comment            => $comment,
+        }
+    );
+
+    $self->render( 'work/done', work => $work );
 }
 
 sub _validate_volunteer {

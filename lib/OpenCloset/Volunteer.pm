@@ -79,7 +79,8 @@ sub _public_routes {
 
     my $work = $works->under('/:id')->to('work#find_work');
     $work->get('/')->to('work#work')->name('work');
-    $work->get('/edit')->to('work#edit')->name('edit');
+    $work->get('/edit')->to('work#edit')->name('work.edit');
+    $work->post('/')->to('work#update')->name('work.update');
 }
 
 sub _private_routes { }
