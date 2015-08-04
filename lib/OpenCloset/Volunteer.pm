@@ -71,6 +71,7 @@ sub _public_routes {
 
     my $work = $r->under('/works');
     $work->get('/new')->to('work#add');
+    $work->post('/')->to('work#create');
 }
 
 sub _private_routes { }

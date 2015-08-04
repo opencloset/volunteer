@@ -13,7 +13,16 @@ has schema => sub { shift->app->schema };
 
 sub add {
     my $self = shift;
-    $self->render('work/add');
+}
+
+=head2 create
+
+    POST /works
+
+=cut
+
+sub create {
+    my $self = shift;
 }
 
 1;
