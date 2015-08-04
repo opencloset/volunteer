@@ -82,9 +82,12 @@ sub _public_routes {
     my $self = shift;
     my $r    = $self->routes;
 
-    my $work = $r->under('/works');
-    $work->get('/new')->to('work#add');
-    $work->post('/')->to('work#create');
+    my $works = $r->under('/works');
+    $works->get('/new')->to('work#add');
+    $works->post('/')->to('work#create');
+
+    my $work = $works->under('/:id')->to('work#find_work');
+    $work->get('/')->to('work#work')->name('work');
 }
 
 sub _private_routes { }

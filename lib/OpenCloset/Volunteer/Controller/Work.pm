@@ -88,6 +88,44 @@ sub create {
     $self->render( 'work/done', work => $work );
 }
 
+=head2 find_work
+
+    under /works/:id
+
+=cut
+
+sub find_work {
+    my $self = shift;
+    my $id   = $self->param('id');
+
+    my $work = $self->schema->resultset('VolunteerWork')->find($id);
+    unless ($work) {
+        $self->error( 404, "Not found volunteer work: $id" );
+        return;
+    }
+
+    $self->stash( work => $work );
+    return 1;
+}
+
+=head2 work
+
+    # work
+    GET /works/:id
+
+=cut
+
+sub work {
+    my $self = shift;
+    my $work = $self->stash('work');
+
+    my $volunteer = $work->volunteer;
+    my $works = $volunteer->volunteer_works( { id => { '!=' => $work->id } } );
+    my $guestbook = $work->volunteer_guestbooks->next;
+
+    $self->render( works => [$works->all], guestbook => $guestbook );
+}
+
 sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
