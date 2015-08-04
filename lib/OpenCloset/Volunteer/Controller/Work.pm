@@ -1,4 +1,4 @@
-package Volunteer::Controller::Work;
+package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
 has schema => sub { shift->app->schema };

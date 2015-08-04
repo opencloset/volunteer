@@ -1,4 +1,4 @@
-package Volunteer;
+package OpenCloset::Volunteer;
 use Mojo::Base 'Mojolicious';
 
 use OpenCloset::Schema;
