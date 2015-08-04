@@ -76,20 +76,15 @@ sub create {
     return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
 
     ## SMS
-    my $sender    = $self->app->sms_sender;
-    my $from_date = $work->activity_from_date;
-    my $to_date   = $work->activity_to_date;
-    my $template
-        = qq{안녕하세요. %s님이 %s월 %s일 %s~%s시에 신청하신 자원봉사신청이 정상적으로 접수되었습니다.
-현재 열린옷장 담당자가 접수된 봉사신청 내역을 확인하고 있습니다. (최종승인까지 소요기간 1일 이내)
-신청하신 봉사시간 및 봉사활동내역에 대해 변경사항이 없는 경우 %s님이 신청해 주신 자원봉사에 대한 최종승인여부가 SMS로 발송될 예정입니다.
-봉사 승인에 대한 SMS 또는 전화연락이 없는 경우 070-4325-7521 혹은 카카오톡 옐로아이디를 통해 문의해주시기 바랍니다. 감사합니다.};
-    my $msg = sprintf( $template,
-        $volunteer->name, $from_date->month, $from_date->day, $from, $to,
-        $volunteer->name );
-    my $sent = $sender->send_sms( text => $msg, to => $phone =~ s/-//gr );
+    my $sender = $self->app->sms_sender;
+    my $msg    = $self->render_to_string(
+        'work/status-reported',
+        format => 'txt',
+        work   => $work
+    );
+    chomp $msg;
+    my $sent = $sender->send_sms( text => $msg, to => $phone );
     $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
-
     $self->render( 'work/done', work => $work );
 }
 
