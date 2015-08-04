@@ -116,6 +116,35 @@ sub work {
     $self->render( works => [$works->all], guestbook => $guestbook );
 }
 
+=head2 edit
+
+    # edit
+    GET /works/:id/edit
+
+=cut
+
+sub edit {
+    my $self      = shift;
+    my $authcode  = $self->param('authcode') || '';
+    my $work      = $self->stash('work');
+    my $volunteer = $work->volunteer;
+
+    return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
+
+    my $from = $work->activity_from_date;
+    my $to   = $work->activity_to_date;
+
+    my %filled = ( $work->get_columns, $volunteer->get_columns );
+    $filled{reason}   = [split /\|/, $filled{reason}];
+    $filled{path}     = [split /\|/, $filled{path}];
+    $filled{activity} = [split /\|/, $filled{activity}];
+    $filled{activity_date}      = $from->ymd;
+    $filled{activity_hour_from} = sprintf '%02d', $from->hour;
+    $filled{activity_hour_to}   = sprintf '%02d', $to->hour;
+    $filled{birth_date}         = $volunteer->birth_date->ymd;
+    $self->render_fillinform( \%filled );
+}
+
 sub _validate_volunteer {
     my ( $self, $v ) = @_;
 

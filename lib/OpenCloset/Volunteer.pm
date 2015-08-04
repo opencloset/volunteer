@@ -79,6 +79,7 @@ sub _public_routes {
 
     my $work = $works->under('/:id')->to('work#find_work');
     $work->get('/')->to('work#work')->name('work');
+    $work->get('/edit')->to('work#edit')->name('edit');
 }
 
 sub _private_routes { }
