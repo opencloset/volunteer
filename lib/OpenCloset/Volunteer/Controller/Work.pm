@@ -245,6 +245,7 @@ sub update_status {
         $self->log->error("Failed to send SMS: $msg") unless $sent;
 
         $msg = $self->render_to_string( 'work/opencloset-location', format => 'txt' );
+        chomp $msg;
         $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
 
@@ -260,8 +261,9 @@ sub update_status {
     elsif ( $status eq 'done' ) {
         ## 방명록작성안내문자
         my $phone = $volunteer->phone;
-        my $msg   = $self->render_to_string( 'work/opencloset-done', format => 'txt' );
-        my $sent  = $sender->send_sms( text => $msg, to => $phone );
+        my $msg = $self->render_to_string( 'work/status-done', format => 'txt' );
+        chomp $msg;
+        my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
     }
 
