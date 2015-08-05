@@ -83,7 +83,7 @@ sub _public_routes {
     $work->post('/')->to('work#update')->name('work.update');
     $work->put('/status')->to('work#update_status');
     $work->options('/status')->to('work#preflight_cors');
-    $work->get('/guestbook')->to('work#add_guestbook');
+    $work->get('/guestbook')->to('work#add_guestbook')->name('work.guestbook');
     $work->post('/guestbook')->to('work#create_guestbook');
 }
 
