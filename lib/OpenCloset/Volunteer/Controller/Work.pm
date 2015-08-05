@@ -158,7 +158,7 @@ sub update {
     my $work      = $self->stash('work');
     my $volunteer = $work->volunteer;
 
-    return $self->render( 400, error => 'Wrong authcode' ) if $authcode ne $work->authcode;
+    return $self->error( 400, error => 'Wrong authcode' ) if $authcode ne $work->authcode;
 
     my $v = $self->validation;
     $self->_validate_volunteer_work($v);
