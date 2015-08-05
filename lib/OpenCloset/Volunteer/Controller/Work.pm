@@ -270,6 +270,64 @@ sub update_status {
     $self->render( json => { $work->get_columns } );
 }
 
+=head2 add_guestbook
+
+    GET /works/:id/guestbook?authcode=xxxx
+
+=cut
+
+sub add_guestbook {
+    my $self     = shift;
+    my $authcode = $self->param('authcode') || '';
+    my $work     = $self->stash('work');
+
+    return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
+    $self->render;
+}
+
+=head2 create_guestbook
+
+    POST /works/:id/guestbook
+
+=cut
+
+sub create_guestbook {
+    my $self     = shift;
+    my $authcode = $self->param('authcode') || '';
+    my $work     = $self->stash('work');
+
+    return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
+
+    my $name       = $self->param('name');
+    my $age_group  = $self->param('age-group');
+    my $gender     = $self->param('gender');
+    my $job        = $self->param('job');
+    my $impression = $self->param('impression');
+    my $imprss_etc = $self->param('impression-etc');
+    my $activities = $self->every_param('activity');
+    my $atvt_etc   = $self->param('activity-etc');
+    my $want_to_do = $self->every_param('want-to-do');
+    my $todo_etc   = $self->param('want-to-do-etc');
+    my $comment    = $self->param('comment');
+
+    my $guestbook = $self->schema->resultset('VolunteerGuestbook')->create(
+        {
+            volunteer_work_id => $work->id,
+            name              => $name,
+            age_group         => $age_group,
+            gender            => $gender,
+            job               => $job,
+            impression        => $impression || $imprss_etc,
+            activity          => join( '|', @$activities ) || $atvt_etc,
+            want_to_do        => join( '|', @$want_to_do ) || $todo_etc,
+            comment           => $comment
+        }
+    );
+
+    return $self->error( 500, 'Failed to create Volunteer Guestbook' ) unless $guestbook;
+    $self->render( 'work/thanks', guestbook => $guestbook );
+}
+
 sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
