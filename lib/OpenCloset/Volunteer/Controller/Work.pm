@@ -298,17 +298,19 @@ sub create_guestbook {
 
     return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
 
-    my $name       = $self->param('name');
-    my $age_group  = $self->param('age-group');
-    my $gender     = $self->param('gender');
-    my $job        = $self->param('job');
-    my $impression = $self->param('impression');
-    my $imprss_etc = $self->param('impression-etc');
-    my $activities = $self->every_param('activity');
-    my $atvt_etc   = $self->param('activity-etc');
-    my $want_to_do = $self->every_param('want-to-do');
-    my $todo_etc   = $self->param('want-to-do-etc');
-    my $comment    = $self->param('comment');
+    my $name          = $self->param('name');
+    my $need_1365     = $self->param('1365');
+    my $activity_hour = $self->param('activity-hour');
+    my $age_group     = $self->param('age-group');
+    my $gender        = $self->param('gender');
+    my $job           = $self->param('job');
+    my $impression    = $self->param('impression');
+    my $imprss_etc    = $self->param('impression-etc');
+    my $activities    = $self->every_param('activity');
+    my $atvt_etc      = $self->param('activity-etc');
+    my $want_to_do    = $self->every_param('want-to-do');
+    my $todo_etc      = $self->param('want-to-do-etc');
+    my $comment       = $self->param('comment');
 
     my $guestbook = $self->schema->resultset('VolunteerGuestbook')->create(
         {
@@ -320,7 +322,9 @@ sub create_guestbook {
             impression        => $impression || $imprss_etc,
             activity          => join( '|', @$activities ) || $atvt_etc,
             want_to_do        => join( '|', @$want_to_do ) || $todo_etc,
-            comment           => $comment
+            comment           => $comment,
+            need_1365         => $need_1365,
+            activity_hour     => $activity_hour
         }
     );
 
