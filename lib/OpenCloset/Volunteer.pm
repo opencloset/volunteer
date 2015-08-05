@@ -82,6 +82,7 @@ sub _public_routes {
     $work->get('/edit')->to('work#edit')->name('work.edit');
     $work->post('/')->to('work#update')->name('work.update');
     $work->put('/status')->to('work#update_status');
+    $work->options('/status')->to('work#preflight_cors');
 }
 
 sub _private_routes { }
