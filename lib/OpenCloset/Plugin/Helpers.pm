@@ -40,7 +40,7 @@ sub error {
     return;
 }
 
-sub google_auth {
+sub auth_google {
     my $self = shift;
 
     my $private_key = $self->config->{google_private_key};
