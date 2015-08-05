@@ -1,0 +1,1 @@
+수고하셨습니다. 오늘 봉사활동 어떠셨나요? <%= url_for('work.guestbook')->query(authcode => $work->authcode)->to_abs %> 에서 방명록을 적어주세요. 다음 봉사자들을 위해 활용됩니다.
