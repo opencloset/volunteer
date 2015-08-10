@@ -163,14 +163,14 @@ sub update {
     $self->_validate_volunteer_work($v);
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
-    my $activity_date = $v->param('activity-date');
-    my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
-    my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
-    my $period        = $v->param('period');
-    my $comment       = $v->param('comment');
-    my $reasons       = $v->every_param('reason');
-    my $paths         = $v->every_param('path');
-    my $activities    = $v->every_param('activity');
+    my $activity_date  = $v->param('activity-date');
+    my $activity_hours = $v->param('activity-hours');
+    my $period         = $v->param('period');
+    my $comment        = $v->param('comment');
+    my $reasons        = $v->every_param('reason');
+    my $paths          = $v->every_param('path');
+    my $activities     = $v->every_param('activity');
+    my ( $from, $to ) = split /-/, $activity_hours;
 
     $work->update(
         {
