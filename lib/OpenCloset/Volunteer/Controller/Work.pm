@@ -261,8 +261,8 @@ sub update_status {
         my $volunteer = $work->volunteer;
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
-        my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
-            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        my $text = sprintf "%s on %s %s %s%s-%s%s", $volunteer->name, $from->month_name, $from->day, $from->hour_12,
+            $from->am_or_pm, $to->hour_12, $to->am_or_pm;
         $self->log->debug($text);
         $self->quickAdd("$text");
     }
