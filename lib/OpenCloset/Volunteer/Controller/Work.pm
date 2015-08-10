@@ -73,17 +73,12 @@ sub create {
     return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
 
     ## SMS
-    my $sender = $self->app->sms_sender;
-    my $msg = $self->render_to_string( 'sms/status-reported', format => 'txt', work => $work );
-    chomp $msg;
-    my $sent = $sender->send_sms( text => $msg, to => $phone );
-    $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
-
     ## 1365 봉사신청안내
     if ( $need_1365 && !$_1365 ) {
-        $msg = $self->render_to_string( 'sms/1365-guide', format => 'txt', work => $work );
+        my $sender = $self->app->sms_sender;
+        my $msg = $self->render_to_string( 'sms/1365-guide', format => 'txt', work => $work );
         chomp $msg;
-        $sent = $sender->send_sms( text => $msg, to => $phone );
+        my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
     }
 
