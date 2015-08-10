@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.0");
+use version; our $VERSION = qv("v0.1.1");
 
 has schema => sub {
     my $self = shift;
@@ -75,16 +75,20 @@ sub _public_routes {
     my $self = shift;
     my $r    = $self->routes;
 
+    $r->get('/')->to( cb => sub { shift->redirect_to('work.add') } );
+
     my $works = $r->under('/works');
-    $works->get('/new')->to('work#add');
+    $works->get('/new')->to('work#add')->name('work.add');
     $works->post('/')->to('work#create');
 
     my $work = $works->under('/:id')->to('work#find_work');
     $work->get('/')->to('work#work')->name('work');
     $work->get('/edit')->to('work#edit')->name('work.edit');
     $work->post('/')->to('work#update')->name('work.update');
-    $work->put('/status')->to('work#update_status');
     $work->options('/status')->to('work#preflight_cors');
+    $work->options('/1365')->to('work#preflight_cors');
+    $work->put('/status')->to('work#update_status');
+    $work->put('/1365')->to('work#update_1365');
     $work->get('/guestbook')->to('work#add_guestbook')->name('work.guestbook');
     $work->post('/guestbook')->to('work#create_guestbook');
 }

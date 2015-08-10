@@ -24,17 +24,21 @@
       <div class="row">
         <div class="col-xs-4 col-sm-4 col-md-4">
           <div class="form-group">
-            <input type="text" name="activity_date" class="form-control input-lg" placeholder="봉사활동 날짜 Date" data-date-format="yyyy-mm-dd" tabindex="6">
+            <input type="text" name="activity-date" class="form-control input-lg" placeholder="봉사활동 날짜 Date" data-date-format="yyyy-mm-dd" tabindex="6">
           </div>
         </div>
-        <div class="col-xs-4 col-sm-4 col-md-4">
+
+        <div class="col-xs-8 col-sm-8 col-md-8">
           <div class="form-group">
-            <input type="text" name="activity_hour_from" class="form-control input-lg" placeholder="몇시부터 From Hour" tabindex="7">
-          </div>
-        </div>
-        <div class="col-xs-4 col-sm-4 col-md-4">
-          <div class="form-group">
-            <input type="text" name="activity_hour_to" class="form-control input-lg" placeholder="몇시까지 To Hour" tabindex="8">
+            <select name="activity-hours" class="form-control input-lg" tabindex="7">
+              <option>활동시간을 선택해주세요</option>
+              <option value="10-13">10시 ~ 13시 3시간</option>
+              <option value="14-18">14시 ~ 18시 4시간</option>
+              <option value="10-18">10시 ~ 18시 8시간</option>
+              <option value="10-19">10시 ~ 19시 9시간</option>
+              <option value="14-19">14시 ~ 19시 5시간</option>
+              <option value="14-17">14시 ~ 17시 3시간</option>
+            </select>
           </div>
         </div>
       </div>
@@ -47,6 +51,42 @@
       </div>
 
       <hr class="colorgraph">
+
+      <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6">
+          <div class="form-group">
+            <p class="help-block">1365 승인이 필요하십니까?</p>
+          </div>
+          <div class="form-group">
+            <label class="radio-inline">
+              <input type="radio" name="need_1365" value="1"> 네
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="need_1365" value="0"> 아니오
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6">
+          <div class="form-group">
+            <p class="help-block">
+              <i class="fa fa-exclamation-triangle"></i>
+              1365 홈페이지에서 신청서를 작성하셨습니까?
+            </p>
+            <p class="help-block">
+              자원봉사시간 인증이 필요한 봉사자님은 <a href="http://www.1365.go.kr/nanum/prtl/web/vols/vol/selectWrkView.do?menuNo=P9130&progrmRegistNo=1715602" target="_blank">1365 홈페이지</a>에서 열린옷장에 봉사신청을 하신 후, 본 신청서를 작성해 주시기 바랍니다. <span class="text-danger">봉사시간 인증은 1365 홈페이지에서 신청을 하신 분에게만 승인이 가능합니다.</span>
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="radio-inline">
+              <input type="radio" name="1365" value="1"> 네
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="1365" value="0"> 아니오
+            </label>
+          </div>
+        </div>
+      </div>
 
       <div class="row">
 	<div class="col-xs-6 col-sm-6 col-md-6">
@@ -116,12 +156,12 @@
       </div>
 
       <div class="form-group">
-        <textarea name="comment" class="form-control input-lg" placeholder="열린옷장에서 활동에 대해 자유롭게 적어주세요 About Opencloset Activity" tabindex="9"></textarea>
+        <textarea name="comment" class="form-control input-lg" placeholder="열린옷장에서 활동에 대해 자유롭게 적어주세요 About Opencloset Activity" tabindex="8"></textarea>
       </div>
       <hr class="colorgraph">
       <div class="row">
-	<div class="col-xs-6 col-md-6"><input type="submit" value="신청" class="btn btn-primary btn-block btn-lg" tabindex="10"></div>
-        <div class="col-xs-6 col-md-6"><button type="reset" class="btn btn-danger btn-block btn-lg" tabindex="11">다시작성</button></div>
+	<div class="col-xs-6 col-md-6"><input type="submit" value="신청" class="btn btn-primary btn-block btn-lg" tabindex="9"></div>
+        <div class="col-xs-6 col-md-6"><button type="reset" class="btn btn-danger btn-block btn-lg" tabindex="10">다시작성</button></div>
       </div>
     </form>
   </div>

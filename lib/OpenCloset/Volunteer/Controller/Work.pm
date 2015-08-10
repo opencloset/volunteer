@@ -30,19 +30,21 @@ sub create {
     $self->_validate_volunteer_work($v);
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
-    my $name          = $v->param('name');
-    my $activity_date = $v->param('activity_date');
-    my $email         = $v->param('email');
-    my $birth_date    = $v->param('birth_date');
-    my $phone         = $v->param('phone');
-    my $address       = $v->param('address');
-    my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
-    my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
-    my $period        = $v->param('period');
-    my $comment       = $v->param('comment');
-    my $reasons       = $v->every_param('reason');
-    my $paths         = $v->every_param('path');
-    my $activities    = $v->every_param('activity');
+    my $name           = $v->param('name');
+    my $activity_date  = $v->param('activity-date');
+    my $email          = $v->param('email');
+    my $birth_date     = $v->param('birth_date');
+    my $phone          = $v->param('phone');
+    my $address        = $v->param('address');
+    my $activity_hours = $v->param('activity-hours');
+    my $need_1365      = $v->param('need_1365');
+    my $_1365          = $v->param('1365');
+    my $period         = $v->param('period');
+    my $comment        = $v->param('comment');
+    my $reasons        = $v->every_param('reason');
+    my $paths          = $v->every_param('path');
+    my $activities     = $v->every_param('activity');
+    my ( $from, $to ) = split /-/, $activity_hours;
 
     my $schema = $self->schema;
 
@@ -58,6 +60,7 @@ sub create {
             volunteer_id       => $volunteer->id,
             activity_from_date => "$activity_date $from:00:00",
             activity_to_date   => "$activity_date $to:00:00",
+            need_1365          => $need_1365,
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
@@ -71,10 +74,19 @@ sub create {
 
     ## SMS
     my $sender = $self->app->sms_sender;
-    my $msg = $self->render_to_string( 'work/status-reported', format => 'txt', work => $work );
+    my $msg = $self->render_to_string( 'sms/status-reported', format => 'txt', work => $work );
     chomp $msg;
     my $sent = $sender->send_sms( text => $msg, to => $phone );
     $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
+
+    ## 1365 봉사신청안내
+    if ( $need_1365 && !$_1365 ) {
+        $msg = $self->render_to_string( 'sms/1365-guide', format => 'txt', work => $work );
+        chomp $msg;
+        $sent = $sender->send_sms( text => $msg, to => $phone );
+        $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
+    }
+
     $self->render( 'work/done', work => $work );
 }
 
@@ -138,10 +150,9 @@ sub edit {
     $filled{reason}   = [split /\|/, $filled{reason}];
     $filled{path}     = [split /\|/, $filled{path}];
     $filled{activity} = [split /\|/, $filled{activity}];
-    $filled{activity_date}      = $from->ymd;
-    $filled{activity_hour_from} = sprintf '%02d', $from->hour;
-    $filled{activity_hour_to}   = sprintf '%02d', $to->hour;
-    $filled{birth_date}         = $volunteer->birth_date->ymd;
+    $filled{'activity-date'}  = $from->ymd;
+    $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
+    $filled{birth_date}       = $volunteer->birth_date->ymd;
     $self->render_fillinform( \%filled );
 }
 
@@ -158,25 +169,27 @@ sub update {
     my $work      = $self->stash('work');
     my $volunteer = $work->volunteer;
 
-    return $self->render( 400, error => 'Wrong authcode' ) if $authcode ne $work->authcode;
+    return $self->error( 400, error => 'Wrong authcode' ) if $authcode ne $work->authcode;
 
     my $v = $self->validation;
     $self->_validate_volunteer_work($v);
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
-    my $activity_date = $v->param('activity_date');
-    my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
-    my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
-    my $period        = $v->param('period');
-    my $comment       = $v->param('comment');
-    my $reasons       = $v->every_param('reason');
-    my $paths         = $v->every_param('path');
-    my $activities    = $v->every_param('activity');
+    my $activity_date  = $v->param('activity-date');
+    my $activity_hours = $v->param('activity-hours');
+    my $need_1365      = $v->param('need_1365');
+    my $period         = $v->param('period');
+    my $comment        = $v->param('comment');
+    my $reasons        = $v->every_param('reason');
+    my $paths          = $v->every_param('path');
+    my $activities     = $v->every_param('activity');
+    my ( $from, $to ) = split /-/, $activity_hours;
 
     $work->update(
         {
             activity_from_date => "$activity_date $from:00:00",
             activity_to_date   => "$activity_date $to:00:00",
+            need_1365          => $need_1365,
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
@@ -239,7 +252,7 @@ sub update_status {
     my $sender = $self->app->sms_sender;
     if ( $status eq 'approved' ) {
         my $phone = $volunteer->phone;
-        my $msg = $self->render_to_string( 'work/status-approved', format => 'txt', work => $work );
+        my $msg = $self->render_to_string( 'sms/status-approved', format => 'txt', work => $work );
         chomp $msg;
         my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $msg") unless $sent;
@@ -253,20 +266,38 @@ sub update_status {
         my $volunteer = $work->volunteer;
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
-        my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
-            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        my $text = sprintf "%s on %s %s %s%s-%s%s", $volunteer->name, $from->month_name, $from->day, $from->hour_12,
+            $from->am_or_pm, $to->hour_12, $to->am_or_pm;
         $self->log->debug($text);
         $self->quickAdd("$text");
     }
     elsif ( $status eq 'done' ) {
         ## 방명록작성안내문자
         my $phone = $volunteer->phone;
-        my $msg = $self->render_to_string( 'work/status-done', format => 'txt' );
+        my $msg = $self->render_to_string( 'sms/status-done', format => 'txt' );
         chomp $msg;
         my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
     }
 
+    $self->render( json => { $work->get_columns } );
+}
+
+=head2 update_1365
+
+    PUT /works/:id/1365
+
+=cut
+
+sub update_1365 {
+    my $self  = shift;
+    my $work  = $self->stash('work');
+    my $_1365 = $self->param('1365') || 0;
+
+    my $origin = $self->req->headers->header('origin');
+    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
+
+    $work->update( { done_1365 => $_1365 } );
     $self->render( json => { $work->get_columns } );
 }
 
@@ -298,19 +329,17 @@ sub create_guestbook {
 
     return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
 
-    my $name          = $self->param('name');
-    my $need_1365     = $self->param('1365');
-    my $activity_hour = $self->param('activity-hour');
-    my $age_group     = $self->param('age-group');
-    my $gender        = $self->param('gender');
-    my $job           = $self->param('job');
-    my $impression    = $self->param('impression');
-    my $imprss_etc    = $self->param('impression-etc');
-    my $activities    = $self->every_param('activity');
-    my $atvt_etc      = $self->param('activity-etc');
-    my $want_to_do    = $self->every_param('want-to-do');
-    my $todo_etc      = $self->param('want-to-do-etc');
-    my $comment       = $self->param('comment');
+    my $name       = $self->param('name');
+    my $age_group  = $self->param('age-group');
+    my $gender     = $self->param('gender');
+    my $job        = $self->param('job');
+    my $impression = $self->param('impression');
+    my $imprss_etc = $self->param('impression-etc');
+    my $activities = $self->every_param('activity');
+    my $atvt_etc   = $self->param('activity-etc');
+    my $want_to_do = $self->every_param('want-to-do');
+    my $todo_etc   = $self->param('want-to-do-etc');
+    my $comment    = $self->param('comment');
 
     my $guestbook = $self->schema->resultset('VolunteerGuestbook')->create(
         {
@@ -323,8 +352,6 @@ sub create_guestbook {
             activity          => join( '|', @$activities ) || $atvt_etc,
             want_to_do        => join( '|', @$want_to_do ) || $todo_etc,
             comment           => $comment,
-            need_1365         => $need_1365,
-            activity_hour     => $activity_hour
         }
     );
 
@@ -345,9 +372,10 @@ sub _validate_volunteer {
 sub _validate_volunteer_work {
     my ( $self, $v ) = @_;
 
-    $v->required('activity_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->optional('activity_hour_from')->like(qr/^\d{1,2}$/);
-    $v->optional('activity_hour_to')->like(qr/^\d{1,2}$/);
+    $v->required('activity-date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
+    $v->optional('need_1365');
+    $v->optional('1365');
     $v->optional('reason');
     $v->optional('path');
     $v->optional('period');
