@@ -283,6 +283,24 @@ sub update_status {
     $self->render( json => { $work->get_columns } );
 }
 
+=head2 update_1365
+
+    PUT /works/:id/1365
+
+=cut
+
+sub update_1365 {
+    my $self  = shift;
+    my $work  = $self->stash('work');
+    my $_1365 = $self->param('1365') || 0;
+
+    my $origin = $self->req->headers->header('origin');
+    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
+
+    $work->update( { done_1365 => $_1365 } );
+    $self->render( json => { $work->get_columns } );
+}
+
 =head2 add_guestbook
 
     GET /works/:id/guestbook?authcode=xxxx
