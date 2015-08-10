@@ -75,8 +75,10 @@ sub _public_routes {
     my $self = shift;
     my $r    = $self->routes;
 
+    $r->get('/')->to( cb => sub { shift->redirect_to('work.add') } );
+
     my $works = $r->under('/works');
-    $works->get('/new')->to('work#add');
+    $works->get('/new')->to('work#add')->name('work.add');
     $works->post('/')->to('work#create');
 
     my $work = $works->under('/:id')->to('work#find_work');
