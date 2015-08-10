@@ -30,19 +30,19 @@ sub create {
     $self->_validate_volunteer_work($v);
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
-    my $name          = $v->param('name');
-    my $activity_date = $v->param('activity_date');
-    my $email         = $v->param('email');
-    my $birth_date    = $v->param('birth_date');
-    my $phone         = $v->param('phone');
-    my $address       = $v->param('address');
-    my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
-    my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
-    my $period        = $v->param('period');
-    my $comment       = $v->param('comment');
-    my $reasons       = $v->every_param('reason');
-    my $paths         = $v->every_param('path');
-    my $activities    = $v->every_param('activity');
+    my $name           = $v->param('name');
+    my $activity_date  = $v->param('activity-date');
+    my $email          = $v->param('email');
+    my $birth_date     = $v->param('birth_date');
+    my $phone          = $v->param('phone');
+    my $address        = $v->param('address');
+    my $activity_hours = $v->param('activity-hours');
+    my $period         = $v->param('period');
+    my $comment        = $v->param('comment');
+    my $reasons        = $v->every_param('reason');
+    my $paths          = $v->every_param('path');
+    my $activities     = $v->every_param('activity');
+    my ( $from, $to ) = split /-/, $activity_hours;
 
     my $schema = $self->schema;
 
@@ -138,10 +138,9 @@ sub edit {
     $filled{reason}   = [split /\|/, $filled{reason}];
     $filled{path}     = [split /\|/, $filled{path}];
     $filled{activity} = [split /\|/, $filled{activity}];
-    $filled{activity_date}      = $from->ymd;
-    $filled{activity_hour_from} = sprintf '%02d', $from->hour;
-    $filled{activity_hour_to}   = sprintf '%02d', $to->hour;
-    $filled{birth_date}         = $volunteer->birth_date->ymd;
+    $filled{'activity-date'}  = $from->ymd;
+    $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
+    $filled{birth_date}       = $volunteer->birth_date->ymd;
     $self->render_fillinform( \%filled );
 }
 
@@ -164,7 +163,7 @@ sub update {
     $self->_validate_volunteer_work($v);
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
-    my $activity_date = $v->param('activity_date');
+    my $activity_date = $v->param('activity-date');
     my $from          = sprintf '%02s', $v->param('activity_hour_from') || '00';
     my $to            = sprintf '%02s', $v->param('activity_hour_to') || '00';
     my $period        = $v->param('period');
@@ -345,9 +344,8 @@ sub _validate_volunteer {
 sub _validate_volunteer_work {
     my ( $self, $v ) = @_;
 
-    $v->required('activity_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->optional('activity_hour_from')->like(qr/^\d{1,2}$/);
-    $v->optional('activity_hour_to')->like(qr/^\d{1,2}$/);
+    $v->required('activity-date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
     $v->optional('reason');
     $v->optional('path');
     $v->optional('period');
