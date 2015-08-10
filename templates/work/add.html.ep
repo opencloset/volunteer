@@ -53,6 +53,42 @@
       <hr class="colorgraph">
 
       <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6">
+          <div class="form-group">
+            <p class="help-block">1365 승인이 필요하십니까?</p>
+          </div>
+          <div class="form-group">
+            <label class="radio-inline">
+              <input type="radio" name="need_1365" value="1"> 네
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="need_1365" value="0"> 아니오
+            </label>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-6 col-md-6">
+          <div class="form-group">
+            <p class="help-block">
+              <i class="fa fa-exclamation-triangle"></i>
+              1365 홈페이지에서 신청서를 작성하셨습니까?
+            </p>
+            <p class="help-block">
+              자원봉사시간 인증이 필요한 봉사자님은 <a href="#" target="_blank">1365 홈페이지</a>에서 열린옷장에 봉사신청을 하신 후, 본 신청서를 작성해 주시기 바랍니다. <span class="text-danger">봉사시간 인증은 1365 홈페이지에서 신청을 하신 분에게만 승인이 가능합니다.</span>
+            </p>
+          </div>
+
+          <div class="form-group">
+            <label class="radio-inline">
+              <input type="radio" name="1365" value="1"> 네
+            </label>
+            <label class="radio-inline">
+              <input type="radio" name="1365" value="0"> 아니오
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
 	<div class="col-xs-6 col-sm-6 col-md-6">
           <div class="form-group">
             <p class="help-block">열린옷장을 만나게 된 이유를 선택해주세요</p>
