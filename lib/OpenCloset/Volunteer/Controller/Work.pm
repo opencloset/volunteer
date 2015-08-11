@@ -261,7 +261,12 @@ sub update_status {
         my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $msg") unless $sent;
 
-        $msg = $self->render_to_string( 'work/opencloset-location', format => 'txt' );
+        $msg = $self->render_to_string( 'sms/opencloset-location', format => 'txt' );
+        chomp $msg;
+        $sent = $sender->send_sms( text => $msg, to => $phone );
+        $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
+
+        $msg = $self->render_to_string( 'sms/naver-band', format => 'txt' );
         chomp $msg;
         $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
