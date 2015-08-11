@@ -156,12 +156,18 @@
       </div>
 
       <div class="form-group">
-        <textarea name="comment" class="form-control input-lg" placeholder="열린옷장에서 활동에 대해 자유롭게 적어주세요 About Opencloset Activity" tabindex="8"></textarea>
+        <textarea name="talent" class="form-control input-lg" placeholder="그 이외에 열린옷장과 연관된 재능이 있다면 적어주세요 Describe Your Talent For Opencloset" tabindex="8"></textarea>
       </div>
+
+      <div class="form-group">
+        <textarea name="comment" class="form-control input-lg" placeholder="열린옷장에서 활동에 대해 자유롭게 적어주세요 About Opencloset Activity" tabindex="9"></textarea>
+      </div>
+
       <hr class="colorgraph">
+
       <div class="row">
-	<div class="col-xs-6 col-md-6"><input type="submit" value="신청" class="btn btn-primary btn-block btn-lg" tabindex="9"></div>
-        <div class="col-xs-6 col-md-6"><button type="reset" class="btn btn-danger btn-block btn-lg" tabindex="10">다시작성</button></div>
+	<div class="col-xs-6 col-md-6"><input type="submit" value="신청" class="btn btn-primary btn-block btn-lg" tabindex="10"></div>
+        <div class="col-xs-6 col-md-6"><button type="reset" class="btn btn-danger btn-block btn-lg" tabindex="11">다시작성</button></div>
       </div>
     </form>
   </div>

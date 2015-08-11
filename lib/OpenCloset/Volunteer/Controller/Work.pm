@@ -40,6 +40,7 @@ sub create {
     my $need_1365      = $v->param('need_1365');
     my $_1365          = $v->param('1365');
     my $period         = $v->param('period');
+    my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
@@ -65,6 +66,7 @@ sub create {
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
             activity           => join( '|', @$activities ),
+            talent             => $talent,
             comment            => $comment,
             authcode           => String::Random->new->randregex('[a-zA-Z0-9]{32}')
         }
@@ -179,6 +181,7 @@ sub update {
     my $activity_hours = $v->param('activity-hours');
     my $need_1365      = $v->param('need_1365');
     my $period         = $v->param('period');
+    my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
@@ -194,6 +197,7 @@ sub update {
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
             activity           => join( '|', @$activities ),
+            talent             => $talent,
             comment            => $comment,
         }
     );
@@ -380,6 +384,7 @@ sub _validate_volunteer_work {
     $v->optional('path');
     $v->optional('period');
     $v->optional('activity');
+    $v->optional('talent');
     $v->optional('comment');
 }
 
