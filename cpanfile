@@ -1,3 +1,4 @@
+requires 'Crypt::OpenSSL::RSA';
 requires 'HTTP::Tiny';
 requires 'JSON';
 requires 'JSON::WebToken';
