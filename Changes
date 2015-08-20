@@ -1,4 +1,5 @@
   - 안내문구수정
+  - 신청서의 입력에 대해 실시간 유효성 검증
 
 v0.1.1    Mon Aug 10 19:17:53 2015 KST
   - index 를 /works/new 로 redirect

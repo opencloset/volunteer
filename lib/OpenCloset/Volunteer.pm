@@ -63,6 +63,7 @@ sub _assets {
     $self->asset(
         'work-add.js' => $self->asset->get('bundle.js'),
         $self->asset->get('datepicker.js'), qw{/assets/components/jQuery-Mask-Plugin/dist/jquery.mask.js
+            /assets/components/bootstrap-validator/dist/validator.min.js
             /assets/coffee/work-add.coffee}
     );
     $self->asset(
