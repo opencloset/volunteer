@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.1");
+use version; our $VERSION = qv("v0.1.2");
 
 has schema => sub {
     my $self = shift;
@@ -63,6 +63,7 @@ sub _assets {
     $self->asset(
         'work-add.js' => $self->asset->get('bundle.js'),
         $self->asset->get('datepicker.js'), qw{/assets/components/jQuery-Mask-Plugin/dist/jquery.mask.js
+            /assets/components/bootstrap-validator/dist/validator.min.js
             /assets/coffee/work-add.coffee}
     );
     $self->asset(

@@ -1,3 +1,4 @@
+requires 'Crypt::OpenSSL::RSA';
 requires 'HTTP::Tiny';
 requires 'JSON';
 requires 'JSON::WebToken';
@@ -10,4 +11,4 @@ requires 'String::Random';
 requires 'Try::Tiny';
 
 # cpan.theopencloset.net
-requires 'OpenCloset::Schema';
+requires 'OpenCloset::Schema' => '0.013';
