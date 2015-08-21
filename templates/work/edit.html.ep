@@ -126,7 +126,7 @@
             % for my $activity ('다림질 봉사', '정리 봉사(바코드 찍기, 구두닦기, 의류정리)', '현장감 넘치는 대여봉사', '친절한 안내 봉사') {
             <div class="checkbox">
               <label>
-                <input type="checkbox" name="activity" value="<%= $activity %>">
+                <input type="radio" name="activity" value="<%= $activity %>">
                 %= $activity
               </label>
             </div>
