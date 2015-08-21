@@ -42,9 +42,9 @@ sub create {
     my $period         = $v->param('period');
     my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
+    my $activity       = $v->param('activity');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
-    my $activities     = $v->every_param('activity');
     my ( $from, $to ) = split /-/, $activity_hours;
 
     my $schema = $self->schema;
@@ -65,7 +65,7 @@ sub create {
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
-            activity           => join( '|', @$activities ),
+            activity           => $activity,
             talent             => $talent,
             comment            => $comment,
             authcode           => String::Random->new->randregex('[a-zA-Z0-9]{32}')
@@ -149,9 +149,8 @@ sub edit {
     my $to   = $work->activity_to_date;
 
     my %filled = ( $work->get_columns, $volunteer->get_columns );
-    $filled{reason}   = [split /\|/, $filled{reason}];
-    $filled{path}     = [split /\|/, $filled{path}];
-    $filled{activity} = [split /\|/, $filled{activity}];
+    $filled{reason} = [split /\|/, $filled{reason}];
+    $filled{path}   = [split /\|/, $filled{path}];
     $filled{'activity-date'}  = $from->ymd;
     $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
     $filled{birth_date}       = $volunteer->birth_date->ymd;
@@ -183,9 +182,9 @@ sub update {
     my $period         = $v->param('period');
     my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
+    my $activity       = $v->param('activity');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
-    my $activities     = $v->every_param('activity');
     my ( $from, $to ) = split /-/, $activity_hours;
 
     $work->update(
@@ -196,7 +195,7 @@ sub update {
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
-            activity           => join( '|', @$activities ),
+            activity           => $activity,
             talent             => $talent,
             comment            => $comment,
         }
@@ -275,8 +274,8 @@ sub update_status {
         my $volunteer = $work->volunteer;
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
-        my $text = sprintf "%s on %s %s %s%s-%s%s", $volunteer->name, $from->month_name, $from->day, $from->hour_12,
-            $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
+            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
         $self->log->debug($text);
         $self->quickAdd("$text");
     }
