@@ -9,6 +9,8 @@ use DateTime;
 my $config = require 'volunteer.conf';
 my $conf   = $config->{database};
 
+our $MAX_VOLUNTEERS = 6;
+
 my %options;
 GetOptions( \%options, '--help' );
 run( \%options, @ARGV );
@@ -38,6 +40,24 @@ sub run {
         my $to   = $row->activity_to_date;
         $schedule{$_}++ for ( $from->hour .. $to->hour );
     }
+
+    my %result;
+    my @templates = qw/10-13 14-18 10-18/;
+    for my $template (@templates) {
+        my $possible = 1;
+        my ( $start, $end ) = split /-/, $template;
+        for my $hour ( $start .. $end ) {
+            if ( $schedule{$hour} >= $MAX_VOLUNTEERS ) {
+                $possible = 0;
+                last;
+            }
+        }
+
+        $result{$template} = $possible;
+    }
+
+    use Data::Dump;
+    dd %result;
 }
 
 __END__
