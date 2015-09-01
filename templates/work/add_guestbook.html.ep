@@ -42,7 +42,7 @@
             </div>
             % }
             <div>
-              <input type="text" name="impression-etc" class="form-control" placeholder="기타">
+              <input type="text" name="impression-etc" class="form-control" placeholder="기타 혹은 힘들었던 이유">
             </div>
           </div>
         </div>
@@ -54,7 +54,7 @@
             <p class="help-block">오늘 어떤 활동을 하셨나요?</p>
           </div>
           <div class="form-group">
-            % for my $activity ('5층 정리 및 포장', '4층 반납 및 정리', '구두닦기', '다림질', '친절한 안내 봉사') {
+            % for my $activity ('반납 및 정리', '의류 포장 및 정리', '전화안내 및 제반업무 ( 향수 만들기 등 )', '현장 안내') {
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="activity" value="<%= $activity %>">
@@ -73,7 +73,7 @@
             <p class="help-block">다음 방문시, 열린옷장에서 어떤 활동을 하고 싶나요?</p>
           </div>
           <div class="form-group">
-            % for my $activity ('5층 정리 및 포장', '4층 반납 및 정리', '구두닦기', '다림질', '친절한 안내 봉사') {
+            % for my $activity ('반납 및 정리', '의류 포장 및 정리', '전화안내 및 제반업무', '현장 안내') {
             <div class="checkbox">
               <label>
                 <input type="checkbox" name="want-to-do" value="<%= $activity %>">
