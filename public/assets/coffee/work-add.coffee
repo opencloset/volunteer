@@ -5,4 +5,17 @@ $ ->
     todayHighlight: true
     autoclose:      true
     startDate: new Date()
-  )
+  ).on 'changeDate', (e) ->
+    $select = $('select[name=activity-hours]')
+    $select.get(0).selectedIndex = -1
+    ymd = e.currentTarget.value
+    $.ajax "/works/hours/#{ymd}",
+      type: 'GET'
+      dataType: 'json'
+      success: (data, textStatus, jqXHR) ->
+        $('select[name=activity-hours] option').each ->
+          value = $(@).val()
+          $(@).prop('disabled', (i, v) -> false)
+          $(@).prop('disabled', true) unless data[value]
+      error: (jqXHR, textStatus, errorThrown) ->
+      complete: (jqXHR, textStatus) ->

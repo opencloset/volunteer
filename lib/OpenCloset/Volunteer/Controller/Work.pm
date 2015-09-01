@@ -1,7 +1,10 @@
 package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
+use DateTime;
 use String::Random ();
+
+our $MAX_VOLUNTEERS = 6;
 
 has schema => sub { shift->app->schema };
 
@@ -46,6 +49,9 @@ sub create {
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
     my ( $from, $to ) = split /-/, $activity_hours;
+
+    my $able_hours = $self->_able_hour($activity_date);
+    return $self->error( 400, "Not allow activity hours: $activity_hours" ) unless $able_hours->{$activity_hours};
 
     my $schema = $self->schema;
 
@@ -367,6 +373,18 @@ sub create_guestbook {
     $self->render( 'work/thanks', guestbook => $guestbook );
 }
 
+=head2 able_hour
+
+    GET /works/hours/:ymd
+
+=cut
+
+sub able_hour {
+    my $self = shift;
+    my $ymd  = $self->param('ymd');
+    $self->render( json => $self->_able_hour($ymd) );
+}
+
 sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
@@ -390,6 +408,44 @@ sub _validate_volunteer_work {
     $v->optional('activity');
     $v->optional('talent');
     $v->optional('comment');
+}
+
+sub _able_hour {
+    my ( $self, $ymd ) = @_;
+    my ( $year, $mm, $dd ) = split /-/, $ymd;
+    my $parser = $self->schema->storage->datetime_parser;
+    my $dt     = DateTime->new( year => $year, month => $mm, day => $dd );
+    my $rs     = $self->schema->resultset('VolunteerWork')->search(
+        {
+            activity_from_date => {
+                -between => [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
+            }
+        }
+    );
+
+    my %schedule;
+    while ( my $row = $rs->next ) {
+        my $from = $row->activity_from_date;
+        my $to   = $row->activity_to_date;
+        $schedule{$_}++ for ( $from->hour .. $to->hour );
+    }
+
+    my %result;
+    my @templates = qw/10-13 14-18 10-18/;
+    for my $template (@templates) {
+        my $able = 1;
+        my ( $start, $end ) = split /-/, $template;
+        for my $hour ( $start .. $end ) {
+            if ( $schedule{$hour} && $schedule{$hour} >= $MAX_VOLUNTEERS ) {
+                $able = 0;
+                last;
+            }
+        }
+
+        $result{$template} = $able;
+    }
+
+    return {%result};
 }
 
 1;
