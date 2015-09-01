@@ -34,6 +34,7 @@ sub create {
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
     my $name           = $v->param('name');
+    my $gender         = $v->param('gender');
     my $activity_date  = $v->param('activity-date');
     my $email          = $v->param('email');
     my $birth_date     = $v->param('birth_date');
@@ -48,6 +49,7 @@ sub create {
     my $activity       = $v->param('activity');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
+    my $job            = $v->param('job');
     my ( $from, $to ) = split /-/, $activity_hours;
 
     my $able_hours = $self->_able_hour($activity_date);
@@ -55,10 +57,16 @@ sub create {
 
     my $schema = $self->schema;
 
-    my $volunteer
-        = $schema->resultset('Volunteer')
-        ->find_or_create(
-        { name => $name, email => $email, phone => $phone, address => $address, birth_date => $birth_date } );
+    my $volunteer = $schema->resultset('Volunteer')->find_or_create(
+        {
+            name       => $name,
+            gender     => $gender,
+            email      => $email,
+            phone      => $phone,
+            address    => $address,
+            birth_date => $birth_date
+        }
+    );
 
     return $self->error( 500, 'Failed to find or create Volunteer' ) unless $volunteer;
 
@@ -71,6 +79,7 @@ sub create {
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
+            job                => $job,
             activity           => $activity,
             talent             => $talent,
             comment            => $comment,
@@ -191,6 +200,7 @@ sub update {
     my $activity       = $v->param('activity');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
+    my $job            = $v->param('job');
     my ( $from, $to ) = split /-/, $activity_hours;
 
     $work->update(
@@ -201,6 +211,7 @@ sub update {
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
+            job                => $job,
             activity           => $activity,
             talent             => $talent,
             comment            => $comment,
@@ -345,8 +356,6 @@ sub create_guestbook {
 
     my $name       = $self->param('name');
     my $age_group  = $self->param('age-group');
-    my $gender     = $self->param('gender');
-    my $job        = $self->param('job');
     my $impression = $self->param('impression');
     my $imprss_etc = $self->param('impression-etc');
     my $activities = $self->every_param('activity');
@@ -360,8 +369,6 @@ sub create_guestbook {
             volunteer_work_id => $work->id,
             name              => $name,
             age_group         => $age_group,
-            gender            => $gender,
-            job               => $job,
             impression        => $impression || $imprss_etc,
             activity          => join( '|', @$activities ) || $atvt_etc,
             want_to_do        => join( '|', @$want_to_do ) || $todo_etc,
@@ -389,6 +396,7 @@ sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
     $v->required('name');
+    $v->optional('gender');
     $v->optional('email');    # TODO: check valid email
     $v->optional('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('phone')->like(qr/^\d{3}-\d{4}-\d{3,4}$/);
@@ -404,6 +412,7 @@ sub _validate_volunteer_work {
     $v->optional('1365');
     $v->optional('reason');
     $v->optional('path');
+    $v->optional('job');
     $v->optional('period');
     $v->optional('activity');
     $v->optional('talent');
