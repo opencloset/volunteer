@@ -12,9 +12,10 @@ sub register {
     my ( $self, $app, $conf ) = @_;
 
     $app->helper( log => sub { shift->app->log } );
-    $app->helper( error       => \&error );
-    $app->helper( auth_google => \&auth_google );
-    $app->helper( quickAdd    => \&quickAdd );
+    $app->helper( error        => \&error );
+    $app->helper( auth_google  => \&auth_google );
+    $app->helper( quickAdd     => \&quickAdd );
+    $app->helper( delete_event => \&delete_event );
 }
 
 sub error {
@@ -122,6 +123,37 @@ sub quickAdd {
     }
 
     $self->log->debug("Added an event successfully");
+    return decode_json( $res->{content} )->{id};
+}
+
+sub delete_event {
+    my ( $self, $event_id ) = @_;
+
+    my $time  = time;
+    my $token = $self->session('token');
+    if ( !$token || $token->{exp} < $time ) {
+        my $is_auth = $self->auth_google;
+        unless ($is_auth) {
+            $self->log->debug("Failed to add calendar event: Authorization failed");
+            return;
+        }
+
+        $token = $self->session('token');
+    }
+
+    my $calendarId = $self->config->{google_calendar_id};
+    my $url        = "https://www.googleapis.com/calendar/v3/calendars/$calendarId/events/$event_id";
+    my $http       = HTTP::Tiny->new;
+    my $res
+        = $http->delete( "$url", { headers => { authorization => "$token->{token_type} $token->{access_token}" } } );
+
+    unless ( $res->{success} ) {
+        $self->log->error("Failed to delete event");
+        $self->log->error("$res->{status}: $res->{reason}\n$res->{content}\n");
+        return;
+    }
+
+    $self->log->debug("Deleted an event successfully");
     return 1;
 }
 

@@ -294,7 +294,8 @@ sub update_status {
         my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
             $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
         $self->log->debug($text);
-        $self->quickAdd("$text");
+        my $event_id = $self->quickAdd("$text");
+        $work->update( { event_id => $event_id } );
     }
     elsif ( $status eq 'done' ) {
         ## 방명록작성안내문자
@@ -303,6 +304,10 @@ sub update_status {
         chomp $msg;
         my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
+    }
+    elsif ( $status eq 'canceled' ) {
+        my $event_id = $work->event_id;
+        $self->delete_event($event_id) if $event_id;
     }
 
     $self->render( json => { $work->get_columns } );
