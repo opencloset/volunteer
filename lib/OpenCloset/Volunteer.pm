@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.3");
+use version; our $VERSION = qv("v0.1.4");
 
 has schema => sub {
     my $self = shift;
@@ -81,6 +81,7 @@ sub _public_routes {
     my $works = $r->under('/works');
     $works->get('/new')->to('work#add')->name('work.add');
     $works->post('/')->to('work#create');
+    $works->get('/hours/:ymd')->to('work#able_hour');
 
     my $work = $works->under('/:id')->to('work#find_work');
     $work->get('/')->to('work#work')->name('work');

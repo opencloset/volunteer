@@ -1,7 +1,10 @@
 package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
+use DateTime;
 use String::Random ();
+
+our $MAX_VOLUNTEERS = 6;
 
 has schema => sub { shift->app->schema };
 
@@ -31,6 +34,7 @@ sub create {
     return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
 
     my $name           = $v->param('name');
+    my $gender         = $v->param('gender');
     my $activity_date  = $v->param('activity-date');
     my $email          = $v->param('email');
     my $birth_date     = $v->param('birth_date');
@@ -45,14 +49,24 @@ sub create {
     my $activity       = $v->param('activity');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
+    my $job            = $v->param('job');
     my ( $from, $to ) = split /-/, $activity_hours;
+
+    my $able_hours = $self->_able_hour($activity_date);
+    return $self->error( 400, "Not allow activity hours: $activity_hours" ) unless $able_hours->{$activity_hours};
 
     my $schema = $self->schema;
 
-    my $volunteer
-        = $schema->resultset('Volunteer')
-        ->find_or_create(
-        { name => $name, email => $email, phone => $phone, address => $address, birth_date => $birth_date } );
+    my $volunteer = $schema->resultset('Volunteer')->find_or_create(
+        {
+            name       => $name,
+            gender     => $gender,
+            email      => $email,
+            phone      => $phone,
+            address    => $address,
+            birth_date => $birth_date
+        }
+    );
 
     return $self->error( 500, 'Failed to find or create Volunteer' ) unless $volunteer;
 
@@ -65,6 +79,7 @@ sub create {
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
+            job                => $job,
             activity           => $activity,
             talent             => $talent,
             comment            => $comment,
@@ -185,6 +200,7 @@ sub update {
     my $activity       = $v->param('activity');
     my $reasons        = $v->every_param('reason');
     my $paths          = $v->every_param('path');
+    my $job            = $v->param('job');
     my ( $from, $to ) = split /-/, $activity_hours;
 
     $work->update(
@@ -195,6 +211,7 @@ sub update {
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
+            job                => $job,
             activity           => $activity,
             talent             => $talent,
             comment            => $comment,
@@ -277,7 +294,8 @@ sub update_status {
         my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
             $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
         $self->log->debug($text);
-        $self->quickAdd("$text");
+        my $event_id = $self->quickAdd("$text");
+        $work->update( { event_id => $event_id } );
     }
     elsif ( $status eq 'done' ) {
         ## 방명록작성안내문자
@@ -286,6 +304,10 @@ sub update_status {
         chomp $msg;
         my $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
+    }
+    elsif ( $status eq 'canceled' ) {
+        my $event_id = $work->event_id;
+        $self->delete_event($event_id) if $event_id;
     }
 
     $self->render( json => { $work->get_columns } );
@@ -339,8 +361,6 @@ sub create_guestbook {
 
     my $name       = $self->param('name');
     my $age_group  = $self->param('age-group');
-    my $gender     = $self->param('gender');
-    my $job        = $self->param('job');
     my $impression = $self->param('impression');
     my $imprss_etc = $self->param('impression-etc');
     my $activities = $self->every_param('activity');
@@ -354,8 +374,6 @@ sub create_guestbook {
             volunteer_work_id => $work->id,
             name              => $name,
             age_group         => $age_group,
-            gender            => $gender,
-            job               => $job,
             impression        => $impression || $imprss_etc,
             activity          => join( '|', @$activities ) || $atvt_etc,
             want_to_do        => join( '|', @$want_to_do ) || $todo_etc,
@@ -367,10 +385,23 @@ sub create_guestbook {
     $self->render( 'work/thanks', guestbook => $guestbook );
 }
 
+=head2 able_hour
+
+    GET /works/hours/:ymd
+
+=cut
+
+sub able_hour {
+    my $self = shift;
+    my $ymd  = $self->param('ymd');
+    $self->render( json => $self->_able_hour($ymd) );
+}
+
 sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
     $v->required('name');
+    $v->optional('gender');
     $v->optional('email');    # TODO: check valid email
     $v->optional('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('phone')->like(qr/^\d{3}-\d{4}-\d{3,4}$/);
@@ -386,10 +417,49 @@ sub _validate_volunteer_work {
     $v->optional('1365');
     $v->optional('reason');
     $v->optional('path');
+    $v->optional('job');
     $v->optional('period');
     $v->optional('activity');
     $v->optional('talent');
     $v->optional('comment');
+}
+
+sub _able_hour {
+    my ( $self, $ymd ) = @_;
+    my ( $year, $mm, $dd ) = split /-/, $ymd;
+    my $parser = $self->schema->storage->datetime_parser;
+    my $dt     = DateTime->new( year => $year, month => $mm, day => $dd );
+    my $rs     = $self->schema->resultset('VolunteerWork')->search(
+        {
+            activity_from_date => {
+                -between => [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
+            }
+        }
+    );
+
+    my %schedule;
+    while ( my $row = $rs->next ) {
+        my $from = $row->activity_from_date;
+        my $to   = $row->activity_to_date;
+        $schedule{$_}++ for ( $from->hour .. $to->hour );
+    }
+
+    my %result;
+    my @templates = qw/10-13 14-18 10-18/;
+    for my $template (@templates) {
+        my $able = 1;
+        my ( $start, $end ) = split /-/, $template;
+        for my $hour ( $start .. $end ) {
+            if ( $schedule{$hour} && $schedule{$hour} >= $MAX_VOLUNTEERS ) {
+                $able = 0;
+                last;
+            }
+        }
+
+        $result{$template} = $able;
+    }
+
+    return {%result};
 }
 
 1;
