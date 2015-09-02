@@ -14,6 +14,8 @@
         <dl class="dl-horizontal">
           <dt>이름</dt>
           <dd><%= $volunteer->name %></dd>
+          <dt>성별</dt>
+          <dd><%= $volunteer->gender %></dd>
           <dt>이메일</dt>
           <dd><%= $volunteer->email %></dd>
           <dt>전화번호</dt>
@@ -31,10 +33,6 @@
             <dd><%= $guestbook->need_1365 ? '예' : '아니오' %></dd>
             <dt>활동시간</dt>
             <dd><%= $guestbook->activity_hour %> 시간</dd>
-            <dt>성별</dt>
-            <dd><%= $guestbook->gender %></dd>
-            <dt>직업</dt>
-            <dd><%= $guestbook->job %></dd>
             <dt>소감</dt>
             <dd><%= $guestbook->impression %></dd>
             <dt>활동</dt>
@@ -71,6 +69,13 @@
               % for my $path (@paths) {
               <li class="list-group-item"><%= $path %></li>
               % }
+            </ul>
+          </dd>
+
+          <dd>
+            <ul class="list-group">
+              <li class="list-group-item text-center text-info">직업</li>
+              <li class="list-group-item"><%= $work->job %></li>
             </ul>
           </dd>
 

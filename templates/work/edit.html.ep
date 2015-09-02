@@ -1,12 +1,23 @@
-% title '자원봉사신청서';
+% title '자원봉사 신청서';
 % layout 'default', js => 'work-add.js', css => 'work-add.css';
 
 <div class="row">
   <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
     <form action="<%= url_for('work.update') %>" method="POST" role="form">
       <input type="hidden" name="authcode" value="<%= $work->authcode %>">
-      <h2>자원봉사신청서 <small>열린옷장</small></h2>
+      <h2>자원봉사 신청서 <small>열린옷장</small></h2>
       <hr class="colorgraph">
+
+      <div class="form-group">
+        % for my $gender ('male', 'female') {
+          <label class="radio-inline">
+            <input type="radio" name="gender" value="<%= $gender %>">
+            %= $gender eq 'male' ? '남' : '여'
+            <i class="fa fa-<%= $gender %> <%= $gender %>"></i>
+          </label>
+        % }
+      </div>
+
       <div class="form-group">
 	<input type="text" name="name" class="form-control input-lg" placeholder="이름 Name" disabled=true tabindex="1">
       </div>
@@ -36,6 +47,11 @@
               <option value="14-18">14시 ~ 18시 4시간</option>
               <option value="10-18">10시 ~ 18시 7시간</option>
             </select>
+            <div class="help-block">
+              예약가능한 활동시간만 선택가능합니다.
+              예약이 완료된 시간은 선택이 불가능합니다.
+            </div>
+            <div class="help-block with-errors"></div>
           </div>
         </div>
       </div>
@@ -120,11 +136,30 @@
             <p class="help-block">열린옷장에서 어떤 활동에 관심있나요?</p>
           </div>
           <div class="form-group">
-            % for my $activity ('다림질 봉사', '정리 봉사(바코드 찍기, 구두닦기, 의류정리)', '현장감 넘치는 대여봉사', '친절한 안내 봉사') {
-            <div class="checkbox">
+            % for my $activity ('반납 및 정리', '의류포장 및 정리') {
+            <div class="radio">
               <label>
                 <input type="radio" name="activity" value="<%= $activity %>">
                 %= $activity
+              </label>
+            </div>
+            % }
+            <div class="help-block small">각 4, 5층 활동으로 나뉘어져 있으며 4층은 반납 및 정리, 5층은 의류포장 및 정리 입니다</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-6 col-sm-6 col-md-6">
+          <div class="form-group">
+            <p class="help-block">해당 직업에 선택해주세요</p>
+          </div>
+          <div class="form-group">
+            % for my $job ('중고등학생', '대학생 및 취업 준비생', '직장인', '재취업 및 휴직기', '주부') {
+            <div class="radio">
+              <label>
+                <input type="radio" name="job" value="<%= $job %>">
+                %= $job
               </label>
             </div>
             % }
