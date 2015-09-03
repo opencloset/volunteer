@@ -31,7 +31,10 @@ sub create {
     my $v    = $self->validation;
     $self->_validate_volunteer($v);
     $self->_validate_volunteer_work($v);
-    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
 
     my $name           = $v->param('name');
     my $gender         = $v->param('gender');
@@ -189,7 +192,10 @@ sub update {
 
     my $v = $self->validation;
     $self->_validate_volunteer_work($v);
-    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
 
     my $activity_date  = $v->param('activity-date');
     my $activity_hours = $v->param('activity-hours');
@@ -401,11 +407,11 @@ sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
     $v->required('name');
-    $v->optional('gender');
-    $v->optional('email');    # TODO: check valid email
-    $v->optional('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->required('gender');
+    $v->required('email');    # TODO: check valid email
+    $v->required('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('phone')->like(qr/^\d{3}-\d{4}-\d{3,4}$/);
-    $v->optional('address');
+    $v->required('address');
 }
 
 sub _validate_volunteer_work {
@@ -415,11 +421,11 @@ sub _validate_volunteer_work {
     $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
     $v->optional('need_1365');
     $v->optional('1365');
-    $v->optional('reason');
-    $v->optional('path');
-    $v->optional('job');
-    $v->optional('period');
-    $v->optional('activity');
+    $v->required('reason');
+    $v->required('path');
+    $v->required('job');
+    $v->required('period');
+    $v->required('activity');
     $v->optional('talent');
     $v->optional('comment');
 }
