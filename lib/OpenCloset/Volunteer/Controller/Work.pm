@@ -2,6 +2,8 @@ package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use Email::Simple;
+use Encode qw/encode_utf8/;
 use String::Random ();
 
 our $MAX_VOLUNTEERS = 6;
@@ -39,7 +41,7 @@ sub create {
     my $name           = $v->param('name');
     my $gender         = $v->param('gender');
     my $activity_date  = $v->param('activity-date');
-    my $email          = $v->param('email');
+    my $email_addr     = $v->param('email');
     my $birth_date     = $v->param('birth_date');
     my $phone          = $v->param('phone');
     my $address        = $v->param('address');
@@ -64,7 +66,7 @@ sub create {
         {
             name       => $name,
             gender     => $gender,
-            email      => $email,
+            email      => $email_addr,
             phone      => $phone,
             address    => $address,
             birth_date => $birth_date
@@ -107,6 +109,19 @@ sub create {
         $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
     }
 
+    my $email = Email::Simple->create(
+        header => [
+            From => $self->config->{google_user_id},
+            To   => $self->config->{notify_to},
+            Subject =>
+                sprintf( "[열린옷장 봉사활동 신청접수] %s님이 봉사활동을 신청하셨습니다.",
+                $name ),
+        ],
+        body => '제곧내',
+    );
+
+    $self->log->debug( $email->as_string );
+    $self->send_mail( encode_utf8( $email->as_string ) );
     $self->render( 'work/done', work => $work );
 }
 
