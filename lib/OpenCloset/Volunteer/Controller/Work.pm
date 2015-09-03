@@ -168,7 +168,7 @@ sub edit {
     $filled{path}   = [split /\|/, $filled{path}];
     $filled{'activity-date'}  = $from->ymd;
     $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
-    $filled{birth_date}       = $volunteer->birth_date->ymd;
+    $filled{birth_date} = $volunteer->birth_date->ymd if $volunteer->birth_date;
     $self->render_fillinform( \%filled );
 }
 
