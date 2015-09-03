@@ -31,7 +31,10 @@ sub create {
     my $v    = $self->validation;
     $self->_validate_volunteer($v);
     $self->_validate_volunteer_work($v);
-    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
 
     my $name           = $v->param('name');
     my $gender         = $v->param('gender');
@@ -189,7 +192,10 @@ sub update {
 
     my $v = $self->validation;
     $self->_validate_volunteer_work($v);
-    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
 
     my $activity_date  = $v->param('activity-date');
     my $activity_hours = $v->param('activity-hours');
