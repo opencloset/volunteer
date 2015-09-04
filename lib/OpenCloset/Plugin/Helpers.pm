@@ -37,7 +37,7 @@ sub register {
     $app->helper( send_mail    => \&send_mail );
 }
 
-=head2 error
+=head2 error( $status, $error )
 
     get '/foo' => sub {
         my $self = shift;
@@ -47,7 +47,7 @@ sub register {
 
 =head2 log
 
-shortcut for C<$self->app->log>
+shortcut for C<$self-E<gt>app-E<gt>log>
 
     $self->app->log->debug('message');    # OK
     $self->log->debug('message');         # OK, shortcut
@@ -133,7 +133,13 @@ sub auth_google {
     return 1;
 }
 
-=head2 quickAdd
+=head2 quickAdd( $text )
+
+=over
+
+=item $text - The text describing the event to be created.
+
+=back
 
 =cut
 
@@ -171,7 +177,13 @@ sub quickAdd {
     return decode_json( $res->{content} )->{id};
 }
 
-=head2 delete_event
+=head2 delete_event( $event_id )
+
+=over
+
+=item $event_id - google event id.
+
+=back
 
 =cut
 
@@ -206,9 +218,9 @@ sub delete_event {
     return 1;
 }
 
-=head2 send_mail
+=head2 send_mail( $email )
 
-=over parameters
+=over
 
 =item $email - RFC 5322 formatted String.
 
