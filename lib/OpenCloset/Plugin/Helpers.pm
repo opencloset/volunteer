@@ -101,13 +101,19 @@ sub auth_google {
 
     my $time               = time;
     my $private_key_string = $private->{private_key};
-    my $claim_set          = {
-        iss => $private->{client_email},
-        scope =>
-            'https://www.googleapis.com/auth/calendar https://mail.google.com https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/gmail.send',
-        aud => 'https://www.googleapis.com/oauth2/v3/token',
-        exp => $time + 3600,
-        iat => $time
+
+    my @scopes = (
+        'https://www.googleapis.com/auth/calendar',     'https://mail.google.com/',
+        'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.compose',
+        'https://www.googleapis.com/auth/gmail.send',
+    );
+
+    my $claim_set = {
+        iss   => $private->{client_email},
+        scope => join( ' ', @scopes ),
+        aud   => 'https://www.googleapis.com/oauth2/v3/token',
+        exp   => $time + 3600,
+        iat   => $time,
     };
 
     my $jwt  = encode_jwt $claim_set, $private_key_string, 'RS256', { typ => 'JWT' };
@@ -233,6 +239,7 @@ sub send_mail {
 
     my $time  = time;
     my $token = $self->session('token');
+
     if ( !$token || $token->{exp} < $time ) {
         my $is_auth = $self->auth_google;
         unless ($is_auth) {
@@ -243,19 +250,19 @@ sub send_mail {
         $token = $self->session('token');
     }
 
-    my $userId = $self->config->{google_user_id};
-    $self->log->debug( encode_base64url($email) );
-
-    # https://www.googleapis.com/gmail/v1/users/$userId/messages/send
-    # https://www.googleapis.com/upload/gmail/v1/users/$userId/messages/send?uploadType=media
-    my $url  = "https://www.googleapis.com/upload/gmail/v1/users/$userId/messages/send?uploadType=media";
-    my $http = HTTP::Tiny->new;
-    my $res  = $http->request(
+    my $userId  = $self->config->{google_user_id};
+    my $url     = "https://www.googleapis.com/gmail/v1/users/$userId/messages/send";
+    my $http    = HTTP::Tiny->new;
+    my $content = encode_json( { raw => encode_base64url($email) } );
+    $self->log->debug($content);
+    my $res = $http->request(
         'POST', "$url",
         {
-            headers =>
-                { authorization => "$token->{token_type} $token->{access_token}", 'content-type' => 'message/rfc822' },
-            content => encode_base64url($email)
+            headers => {
+                authorization  => "$token->{token_type} $token->{access_token}",
+                'content-type' => 'application/json'
+            },
+            content => $content,
         }
     );
 
