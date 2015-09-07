@@ -2,12 +2,15 @@ package OpenCloset::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
+use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
 use JSON::WebToken;
 use JSON;
 use Path::Tiny;
 use Try::Tiny;
-use MIME::Base64 'encode_base64url';
+
+has transport => sub { Email::Sender::Transport::SMTP->new( { host => 'localhost' } ) };
 
 =encoding utf8
 
@@ -236,44 +239,9 @@ sub delete_event {
 
 sub send_mail {
     my ( $self, $email ) = @_;
+    return unless $email;
 
-    my $time  = time;
-    my $token = $self->session('token');
-
-    if ( !$token || $token->{exp} < $time ) {
-        my $is_auth = $self->auth_google;
-        unless ($is_auth) {
-            $self->log->debug("Failed to add calendar event: Authorization failed");
-            return;
-        }
-
-        $token = $self->session('token');
-    }
-
-    my $userId  = $self->config->{google_user_id};
-    my $url     = "https://www.googleapis.com/gmail/v1/users/$userId/messages/send";
-    my $http    = HTTP::Tiny->new;
-    my $content = encode_json( { raw => encode_base64url($email) } );
-    $self->log->debug($content);
-    my $res = $http->request(
-        'POST', "$url",
-        {
-            headers => {
-                authorization  => "$token->{token_type} $token->{access_token}",
-                'content-type' => 'application/json'
-            },
-            content => $content,
-        }
-    );
-
-    unless ( $res->{success} ) {
-        $self->log->error("Failed to send email");
-        $self->log->error("$res->{status}: $res->{reason}\n$res->{content}\n");
-        return;
-    }
-
-    $self->log->debug("Sent an email successfully");
-    return 1;
+    sendmail( $email, { transport => $self->transport } );
 }
 
 1;

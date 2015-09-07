@@ -111,16 +111,15 @@ sub create {
 
     my $email = Email::Simple->create(
         header => [
-            From => $self->config->{google_user_id},
-            To   => $self->config->{notify_to},
+            From => $self->config->{email_notify_from},
+            To   => $self->config->{email_notify_to},
             Subject =>
                 sprintf( "[열린옷장 봉사활동 신청접수] %s님이 봉사활동을 신청하셨습니다.",
                 $name ),
         ],
-        body => '제곧내',
+        body => '--',
     );
 
-    $self->log->debug( $email->as_string );
     $self->send_mail( encode_utf8( $email->as_string ) );
     $self->render( 'work/done', work => $work );
 }

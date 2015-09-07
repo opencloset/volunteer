@@ -27,8 +27,8 @@ my $SMS_FROM = '07043257521';
             _from          => $SMS_FROM,
         },
     },
-    notify_to => 'info@theopencloset.net',
     google_private_key => 'google-private-key.json',
     google_calendar_id => 'volunteer@theopencloset.net',
-    google_user_id     => 'volunteer@theopencloset.net',
+    email_notify_from  => 'volunteer@theopencloset.net',
+    email_notify_to    => 'info@theopencloset.net',
 };
