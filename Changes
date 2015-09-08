@@ -1,3 +1,4 @@
+  - 방명록에 관련된 SMS 를 보내지 않습니다 (OpenCloset-Cron-SMS 에서 대신 처리)
   - 신청서제출시 validation 메세지를 조금 더 상세하게
   - 신청서의 대부분을 필수입력 요소로 변경
   - 생년월일 placeholder 변경

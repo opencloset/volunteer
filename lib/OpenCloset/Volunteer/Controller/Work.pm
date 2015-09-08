@@ -317,14 +317,6 @@ sub update_status {
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
-    elsif ( $status eq 'done' ) {
-        ## 방명록작성안내문자
-        my $phone = $volunteer->phone;
-        my $msg = $self->render_to_string( 'sms/status-done', format => 'txt' );
-        chomp $msg;
-        my $sent = $sender->send_sms( text => $msg, to => $phone );
-        $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
-    }
     elsif ( $status eq 'canceled' ) {
         my $event_id = $work->event_id;
         $self->delete_event($event_id) if $event_id;
