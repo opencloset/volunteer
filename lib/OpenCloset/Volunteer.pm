@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.4");
+use version; our $VERSION = qv("v0.1.5");
 
 has schema => sub {
     my $self = shift;
@@ -37,6 +37,7 @@ sub startup {
     $self->plugin('FillInFormLite');
     $self->plugin('OpenCloset::Plugin::Helpers');
     $self->secrets( [$ENV{VOLUNTEER_SECRET} || time] );
+    $self->sessions->cookie_name( $self->app->moniker );
     $self->sessions->default_expiration(86400);
 
     $self->_assets;

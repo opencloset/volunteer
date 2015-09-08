@@ -2,6 +2,8 @@ package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
 use DateTime;
+use Email::Simple;
+use Encode qw/encode_utf8/;
 use String::Random ();
 
 our $MAX_VOLUNTEERS = 6;
@@ -31,12 +33,15 @@ sub create {
     my $v    = $self->validation;
     $self->_validate_volunteer($v);
     $self->_validate_volunteer_work($v);
-    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
 
     my $name           = $v->param('name');
     my $gender         = $v->param('gender');
     my $activity_date  = $v->param('activity-date');
-    my $email          = $v->param('email');
+    my $email_addr     = $v->param('email');
     my $birth_date     = $v->param('birth_date');
     my $phone          = $v->param('phone');
     my $address        = $v->param('address');
@@ -61,7 +66,7 @@ sub create {
         {
             name       => $name,
             gender     => $gender,
-            email      => $email,
+            email      => $email_addr,
             phone      => $phone,
             address    => $address,
             birth_date => $birth_date
@@ -104,6 +109,18 @@ sub create {
         $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
     }
 
+    my $email = Email::Simple->create(
+        header => [
+            From => $self->config->{email_notify_from},
+            To   => $self->config->{email_notify_to},
+            Subject =>
+                sprintf( "[열린옷장 봉사활동 신청접수] %s님이 봉사활동을 신청하셨습니다.",
+                $name ),
+        ],
+        body => '--',
+    );
+
+    $self->send_mail( encode_utf8( $email->as_string ) );
     $self->render( 'work/done', work => $work );
 }
 
@@ -168,7 +185,7 @@ sub edit {
     $filled{path}   = [split /\|/, $filled{path}];
     $filled{'activity-date'}  = $from->ymd;
     $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
-    $filled{birth_date}       = $volunteer->birth_date->ymd;
+    $filled{birth_date} = $volunteer->birth_date->ymd if $volunteer->birth_date;
     $self->render_fillinform( \%filled );
 }
 
@@ -189,7 +206,10 @@ sub update {
 
     my $v = $self->validation;
     $self->_validate_volunteer_work($v);
-    return $self->error( 400, 'Parameter Validation Failed' ) if $v->has_error;
+    if ( $v->has_error ) {
+        my $failed = $v->failed;
+        return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
+    }
 
     my $activity_date  = $v->param('activity-date');
     my $activity_hours = $v->param('activity-hours');
@@ -297,14 +317,6 @@ sub update_status {
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
-    elsif ( $status eq 'done' ) {
-        ## 방명록작성안내문자
-        my $phone = $volunteer->phone;
-        my $msg = $self->render_to_string( 'sms/status-done', format => 'txt' );
-        chomp $msg;
-        my $sent = $sender->send_sms( text => $msg, to => $phone );
-        $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
-    }
     elsif ( $status eq 'canceled' ) {
         my $event_id = $work->event_id;
         $self->delete_event($event_id) if $event_id;
@@ -401,11 +413,11 @@ sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
     $v->required('name');
-    $v->optional('gender');
-    $v->optional('email');    # TODO: check valid email
-    $v->optional('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
+    $v->required('gender');
+    $v->required('email');    # TODO: check valid email
+    $v->required('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('phone')->like(qr/^\d{3}-\d{4}-\d{3,4}$/);
-    $v->optional('address');
+    $v->required('address');
 }
 
 sub _validate_volunteer_work {
@@ -415,11 +427,11 @@ sub _validate_volunteer_work {
     $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
     $v->optional('need_1365');
     $v->optional('1365');
-    $v->optional('reason');
-    $v->optional('path');
-    $v->optional('job');
-    $v->optional('period');
-    $v->optional('activity');
+    $v->required('reason');
+    $v->required('path');
+    $v->required('job');
+    $v->required('period');
+    $v->required('activity');
     $v->optional('talent');
     $v->optional('comment');
 }

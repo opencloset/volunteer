@@ -1,4 +1,7 @@
 requires 'Crypt::OpenSSL::RSA';
+requires 'Email::Sender::Simple';
+requires 'Email::Sender::Transport::SMTP';
+requires 'Email::Simple';
 requires 'HTTP::Tiny';
 requires 'JSON';
 requires 'JSON::WebToken';

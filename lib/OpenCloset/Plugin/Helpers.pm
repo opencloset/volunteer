@@ -2,11 +2,32 @@ package OpenCloset::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
+use Email::Sender::Simple qw(sendmail);
+use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
 use JSON::WebToken;
 use JSON;
 use Path::Tiny;
 use Try::Tiny;
+
+has transport => sub { Email::Sender::Transport::SMTP->new( { host => 'localhost' } ) };
+
+=encoding utf8
+
+=head1 NAME
+
+OpenCloset::Plugin::Helpers
+
+=head1 SYNOPSIS
+
+    # Mojolicious::Lite
+    plugin 'Evid::Plugin::Helpers';
+    # Mojolicious
+    $self->plugin('OpenCloset::Plugin::Helpers');
+
+=head1 HELPERS
+
+=cut
 
 sub register {
     my ( $self, $app, $conf ) = @_;
@@ -16,7 +37,25 @@ sub register {
     $app->helper( auth_google  => \&auth_google );
     $app->helper( quickAdd     => \&quickAdd );
     $app->helper( delete_event => \&delete_event );
+    $app->helper( send_mail    => \&send_mail );
 }
+
+=head2 error( $status, $error )
+
+    get '/foo' => sub {
+        my $self = shift;
+        my $required = $self->param('something');
+        return $self->error(400, 'oops wat the..') unless $required;
+    } => 'foo';
+
+=head2 log
+
+shortcut for C<$self-E<gt>app-E<gt>log>
+
+    $self->app->log->debug('message');    # OK
+    $self->log->debug('message');         # OK, shortcut
+
+=cut
 
 sub error {
     my ( $self, $status, $error ) = @_;
@@ -41,6 +80,10 @@ sub error {
     return;
 }
 
+=head2 auth_google
+
+=cut
+
 sub auth_google {
     my $self = shift;
 
@@ -61,12 +104,19 @@ sub auth_google {
 
     my $time               = time;
     my $private_key_string = $private->{private_key};
-    my $claim_set          = {
+
+    my @scopes = (
+        'https://www.googleapis.com/auth/calendar',     'https://mail.google.com/',
+        'https://www.googleapis.com/auth/gmail.modify', 'https://www.googleapis.com/auth/gmail.compose',
+        'https://www.googleapis.com/auth/gmail.send',
+    );
+
+    my $claim_set = {
         iss   => $private->{client_email},
-        scope => 'https://www.googleapis.com/auth/calendar',
+        scope => join( ' ', @scopes ),
         aud   => 'https://www.googleapis.com/oauth2/v3/token',
         exp   => $time + 3600,
-        iat   => $time
+        iat   => $time,
     };
 
     my $jwt  = encode_jwt $claim_set, $private_key_string, 'RS256', { typ => 'JWT' };
@@ -91,6 +141,16 @@ sub auth_google {
     $self->session( token => { %$token, exp => $time + 3600, iat => $time } );
     return 1;
 }
+
+=head2 quickAdd( $text )
+
+=over
+
+=item $text - The text describing the event to be created.
+
+=back
+
+=cut
 
 sub quickAdd {
     my ( $self, $text ) = @_;
@@ -126,6 +186,16 @@ sub quickAdd {
     return decode_json( $res->{content} )->{id};
 }
 
+=head2 delete_event( $event_id )
+
+=over
+
+=item $event_id - google event id.
+
+=back
+
+=cut
+
 sub delete_event {
     my ( $self, $event_id ) = @_;
 
@@ -157,42 +227,21 @@ sub delete_event {
     return 1;
 }
 
-1;
+=head2 send_mail( $email )
 
-=pod
+=over
 
-=encoding utf8
+=item $email - RFC 5322 formatted String.
 
-=head1 NAME
-
-OpenCloset::Plugin::Helpers
-
-=head1 SYNOPSIS
-
-    # Mojolicious::Lite
-    plugin 'Evid::Plugin::Helpers';
-    # Mojolicious
-    $self->plugin('OpenCloset::Plugin::Helpers');
-
-=head1 HELPERS
-
-=head2 error
-
-    get '/foo' => sub {
-        my $self = shift;
-        my $required = $self->param('something');
-        return $self->error(400, 'oops wat the..') unless $required;
-    } => 'foo';
-
-=head2 log
-
-shortcut for C<$self->app->log>
-
-    $self->app->log->debug('message');    # OK
-    $self->log->debug('message');         # OK, shortcut
-
-=head2 auth_google
-
-=head2 quickAdd
+=back
 
 =cut
+
+sub send_mail {
+    my ( $self, $email ) = @_;
+    return unless $email;
+
+    sendmail( $email, { transport => $self->transport } );
+}
+
+1;
