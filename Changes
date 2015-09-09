@@ -1,3 +1,6 @@
+v0.1.6    Wed, 09 Sep 2015 18:30:07 +0900
+  - send mail 버그 수정
+
 v0.1.5    Tue, 08 Sep 2015 18:15:32 +0900
   - 방명록에 관련된 SMS 를 보내지 않습니다 (OpenCloset-Cron-SMS 에서 대신 처리)
   - 신청서제출시 validation 메세지를 조금 더 상세하게

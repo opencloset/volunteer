@@ -10,8 +10,6 @@ use JSON;
 use Path::Tiny;
 use Try::Tiny;
 
-has transport => sub { Email::Sender::Transport::SMTP->new( { host => 'localhost' } ) };
-
 =encoding utf8
 
 =head1 NAME
@@ -241,7 +239,8 @@ sub send_mail {
     my ( $self, $email ) = @_;
     return unless $email;
 
-    sendmail( $email, { transport => $self->transport } );
+    my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
+    sendmail( $email, { transport => $transport } );
 }
 
 1;
