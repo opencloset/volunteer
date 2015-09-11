@@ -238,6 +238,17 @@ sub update {
         }
     );
 
+    if ( $work->event_id ) {
+        $self->delete_event( $work->event_id );
+        my $from = $work->activity_from_date;
+        my $to   = $work->activity_to_date;
+        my $text = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
+            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        $self->log->debug($text);
+        my $event_id = $self->quickAdd("$text");
+        $work->update( { event_id => $event_id } );
+    }
+
     $self->render( 'work/done', work => $work );
 }
 
