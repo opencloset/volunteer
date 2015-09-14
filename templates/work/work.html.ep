@@ -99,7 +99,7 @@
         % for my $w (@$works) {
           % my $from = $w->activity_from_date;
           <li>
-            <a href="<%= url_for('/volunteers/' . $w->id) %>"><mark><%= $from->ymd %></mark></a>
+            <a href="<%= url_for('/works/' . $w->id) %>"><mark><%= $from->ymd %></mark></a>
             <span class="label label-<%= $w->status %>"><%= $w->status %></span>
           </li>
         % }
