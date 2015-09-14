@@ -5,6 +5,7 @@ $ ->
     todayHighlight: true
     autoclose:      true
     startDate: new Date()
+    daysOfWeekDisabled: [0]
   ).on 'changeDate', (e) ->
     $select = $('select[name=activity-hours]')
     $select.get(0).selectedIndex = -1

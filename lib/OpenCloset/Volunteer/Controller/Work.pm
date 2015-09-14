@@ -1,6 +1,7 @@
 package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
+use DateTime::Format::ISO8601;
 use DateTime;
 use Email::Simple;
 use Encode qw/encode_utf8/;
@@ -60,8 +61,10 @@ sub create {
     my $able_hours = $self->_able_hour($activity_date);
     return $self->error( 400, "Not allow activity hours: $activity_hours" ) unless $able_hours->{$activity_hours};
 
-    my $schema = $self->schema;
+    my $dt = DateTime::Format::ISO8601->parse_datetime($activity_date);
+    return $self->error( 400, "Not allow activity date: Sunday" ) if $dt->day_abbr =~ /Sun/;
 
+    my $schema    = $self->schema;
     my $volunteer = $schema->resultset('Volunteer')->find_or_create(
         {
             name       => $name,
