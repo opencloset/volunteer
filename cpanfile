@@ -1,4 +1,5 @@
 requires 'Crypt::OpenSSL::RSA';
+requires 'DateTime::Format::ISO8601';
 requires 'Email::Sender::Simple';
 requires 'Email::Sender::Transport::SMTP';
 requires 'Email::Simple';
