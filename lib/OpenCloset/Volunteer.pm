@@ -58,8 +58,8 @@ sub _assets {
     );
     $self->asset( 'default.js' => $self->asset->get('bundle.js') );
     $self->asset(
-        'datepicker.js' => qw{/assets/components/bootstrap-datepicker/js/bootstrap-datepicker.js
-            /assets/components/bootstrap-datepicker/js/locales/bootstrap-datepicker.kr.js}
+        'datepicker.js' => qw{/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js
+            /assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js}
     );
     $self->asset(
         'work-add.js' => $self->asset->get('bundle.js'),
@@ -68,7 +68,7 @@ sub _assets {
             /assets/coffee/work-add.coffee}
     );
     $self->asset(
-        'work-add.css' => '/assets/components/bootstrap-datepicker/css/datepicker3.css',
+        'work-add.css' => '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
         $self->asset->get('screen.css')
     );
 }
