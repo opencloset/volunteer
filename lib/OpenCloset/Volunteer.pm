@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.9");
+use version; our $VERSION = qv("v0.1.10");
 
 has schema => sub {
     my $self = shift;
