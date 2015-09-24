@@ -18,6 +18,8 @@
           <dd><%= $volunteer->gender %></dd>
           <dt>이메일</dt>
           <dd><%= $volunteer->email %></dd>
+          <dt>생년월일</dt>
+          <dd><%= $volunteer->birth_date ? $volunteer->birth_date->ymd : '' %></dd>
           <dt>전화번호</dt>
           <dd><%= $volunteer->phone %></dd>
           <dt>주소</dt>
