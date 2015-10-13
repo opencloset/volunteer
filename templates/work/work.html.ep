@@ -32,7 +32,7 @@
             <dt>연령대</dt>
             <dd><%= $guestbook->age_group %></dd>
             <dt>1365 필요여부</dt>
-            <dd><%= $guestbook->need_1365 ? '예' : '아니오' %></dd>
+            <dd><%= $work->need_1365 ? '예' : '아니오' %></dd>
             <dt>활동시간</dt>
             <dd><%= $guestbook->activity_hour %> 시간</dd>
             <dt>소감</dt>
