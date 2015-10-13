@@ -1,4 +1,6 @@
-my $SMS_FROM = '07043257521';
+my $SMS_FROM          = '07043257521';
+my $info_address      = 'info@theopencloset.net';
+my $volunteer_address = 'volunteer@theopencloset.net';
 
 {
     database => {
@@ -27,8 +29,10 @@ my $SMS_FROM = '07043257521';
             _from          => $SMS_FROM,
         },
     },
-    google_private_key => 'google-private-key.json',
-    google_calendar_id => 'volunteer@theopencloset.net',
-    email_notify_from  => 'volunteer@theopencloset.net',
-    email_notify_to    => 'info@theopencloset.net',
+    google_private_key          => 'google-private-key.json',
+    google_calendar_id          => $volunteer_address,
+    email_notify_from           => $volunteer_address,
+    email_notify_to             => $info_address,
+    email_notify_guestbook_from => $volunteer_address,
+    email_notify_guestbook_to   => $volunteer_address,
 };
