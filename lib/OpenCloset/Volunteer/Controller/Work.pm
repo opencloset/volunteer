@@ -297,7 +297,7 @@ sub update_status {
     $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
 
     my $validation = $self->validation;
-    $validation->required('status')->in(qw/reported approved done canceled/);
+    $validation->required('status')->in(qw/reported approved done canceled drop/);
     return $self->error( 400, 'Parameter Validation Failed' ) if $validation->has_error;
 
     my $status = $validation->param('status');
@@ -408,6 +408,18 @@ sub create_guestbook {
     );
 
     return $self->error( 500, 'Failed to create Volunteer Guestbook' ) unless $guestbook;
+
+    my $email = Email::Simple->create(
+        header => [
+            From => $self->config->{email_notify_guestbook_from},
+            To   => $self->config->{email_notify_guestbook_to},
+            Subject =>
+                sprintf( "[열린옷장 봉사활동 방명록] %s님의 방명록이 등록되었습니다.", $name ),
+        ],
+        body => $self->url_for( 'work', { id => $work->id } )->query( authcode => $authcode )->to_abs
+    );
+
+    $self->send_mail( encode_utf8( $email->as_string ) );
     $self->render( 'work/thanks', guestbook => $guestbook );
 }
 
@@ -445,7 +457,6 @@ sub _validate_volunteer_work {
     $v->required('path');
     $v->required('job');
     $v->required('period');
-    $v->required('activity');
     $v->optional('talent');
     $v->optional('comment');
 }
