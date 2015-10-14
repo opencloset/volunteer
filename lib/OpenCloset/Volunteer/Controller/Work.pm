@@ -482,7 +482,7 @@ sub _able_hour {
     }
 
     my %result;
-    my @templates = qw/10-13 14-18 10-18/;
+    my @templates = qw/10-11 10-12 10-13 14-18 10-16 10-17 10-18/;
     for my $template (@templates) {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;

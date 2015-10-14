@@ -50,8 +50,12 @@
           <div class="form-group">
             <select name="activity-hours" class="form-control input-lg" tabindex="7" required>
               <option>활동시간을 선택해주세요</option>
+              <option value="10-11">10시 ~ 11시 1시간</option>
+              <option value="10-12">10시 ~ 12시 2시간</option>
               <option value="10-13">10시 ~ 13시 3시간</option>
               <option value="14-18">14시 ~ 18시 4시간</option>
+              <option value="10-16">10시 ~ 16시 5시간</option>
+              <option value="10-17">10시 ~ 17시 6시간</option>
               <option value="10-18">10시 ~ 18시 7시간</option>
             </select>
             <div class="help-block">
