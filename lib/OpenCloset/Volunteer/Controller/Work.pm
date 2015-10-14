@@ -297,7 +297,7 @@ sub update_status {
     $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
 
     my $validation = $self->validation;
-    $validation->required('status')->in(qw/reported approved done canceled/);
+    $validation->required('status')->in(qw/reported approved done canceled drop/);
     return $self->error( 400, 'Parameter Validation Failed' ) if $validation->has_error;
 
     my $status = $validation->param('status');
