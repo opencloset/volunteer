@@ -162,26 +162,6 @@
 
         <div class="col-xs-6 col-sm-6 col-md-6">
           <div class="form-group">
-            <p class="help-block">열린옷장에서 어떤 활동에 관심있나요?</p>
-          </div>
-          <div class="form-group">
-            % for my $activity ('반납 및 정리', '의류포장 및 정리') {
-            <div class="radio">
-              <label>
-                <input type="radio" name="activity" value="<%= $activity %>" required>
-                %= $activity
-              </label>
-            </div>
-            % }
-            <div class="help-block small">각 4, 5층 활동으로 나뉘어져 있으며 4층은 반납 및 정리, 5층은 의류포장 및 정리 입니다</div>
-            <div class="help-block with-errors"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
             <p class="help-block">해당 직업에 선택해주세요</p>
           </div>
           <div class="form-group">

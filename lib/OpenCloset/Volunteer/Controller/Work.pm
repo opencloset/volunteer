@@ -457,7 +457,6 @@ sub _validate_volunteer_work {
     $v->required('path');
     $v->required('job');
     $v->required('period');
-    $v->required('activity');
     $v->optional('talent');
     $v->optional('comment');
 }
