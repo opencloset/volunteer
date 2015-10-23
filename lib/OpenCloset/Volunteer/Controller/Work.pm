@@ -470,7 +470,8 @@ sub _able_hour {
         {
             activity_from_date => {
                 -between => [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
-            }
+            },
+            status => { '!=' => 'canceled' }
         }
     );
 
