@@ -2,3 +2,5 @@ volunteer.conf
 packed/
 public/assets/components/
 google-private-key.json
+_gh_pages/
+node_modules/
