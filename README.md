@@ -9,7 +9,9 @@
     $ cp volunteer.conf.sample volunteer.conf
     $ MOJO_CONFIG=volunteer.conf morbo -l 'http://*:5000' ./script/volunteer    # http://localhost:5000
 
-    # requirements for docs
+
+## docs ##
+
     $ npm install -g grunt-cli
     $ npm install
     $ gem install bundler
