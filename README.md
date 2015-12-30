@@ -9,6 +9,15 @@
     $ cp volunteer.conf.sample volunteer.conf
     $ MOJO_CONFIG=volunteer.conf morbo -l 'http://*:5000' ./script/volunteer    # http://localhost:5000
 
+
+## docs ##
+
+    $ npm install -g grunt-cli
+    $ npm install
+    $ gem install bundler
+    $ bundle install
+    $ bundle exec jekyll serve    # http://localhost:5000
+
 # 환경변수 #
 
 - OPENCLOSET_APISTORE_ID

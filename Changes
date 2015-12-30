@@ -1,3 +1,9 @@
+v0.1.13    Wed, 30 Dec 2015 17:14:26 +0900
+  - calc able hours skip canceled status
+  - use gruntfile rather than mojo asset pack
+  - 2016년 휴일을 예약가능하지 않도록 수정
+  - 활동 승인후에 네이버 밴드 안내 문자 메세지 제거
+
 v0.1.12    Wed, 14 Oct 2015 18:22:46 +0900
   - 수정할때에 더 다양한 봉사활동 시간을 제공
 

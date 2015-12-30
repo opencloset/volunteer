@@ -1,0 +1,22 @@
+{
+  "name": "volunteers",
+  "version": "0.0.1",
+  "description": "opencloset volunteers",
+  "main": "index.js",
+  "author": "Hyungsuk Hong",
+  "license": "MIT",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "^0.7.0",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-cssmin": "^0.14.0",
+    "grunt-contrib-htmlmin": "^0.6.0",
+    "grunt-contrib-less": "^1.1.0",
+    "grunt-contrib-uglify": "^0.11.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-csscomb": "^3.1.0",
+    "grunt-jekyll": "^0.4.2",
+    "load-grunt-tasks": "^3.3.0",
+    "time-grunt": "^1.2.1"
+  }
+}

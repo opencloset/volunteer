@@ -4,7 +4,6 @@ use warnings;
 use Getopt::Long;
 use Pod::Usage;
 use Data::ICal;
-use DateTime;
 use DateTime::Format::ISO8601;
 
 my %options;
@@ -14,12 +13,11 @@ run( \%options, @ARGV );
 sub run {
     my ( $opts, @args ) = @_;
     pod2usage(0) if $opts->{help};
-    pod2usage(0) unless @args;
-    my $now  = DateTime->now;
-    my $year = $now->year;
+    pod2usage(0) if @args < 2;
 
     # https://www.google.com/calendar/ical/ko.south_korea%23holiday%40group.v.calendar.google.com/public/basic.ics
-    my $obj = Data::ICal->new( filename => $args[0] );
+    my $year    = $args[0];
+    my $obj     = Data::ICal->new( filename => $args[1] );
     my $entries = $obj->entries;
 
     my @holidays;
@@ -76,7 +74,7 @@ __END__
 
 =head1 SYNOPSIS
 
-    $ generate-holiday-as-coffee-code.pl <ics-file>
+    $ generate-holiday-as-coffee-code.pl <year> <ics-file>
       -h --help                Display the help information
 
 =cut

@@ -316,11 +316,6 @@ sub update_status {
         $sent = $sender->send_sms( text => $msg, to => $phone );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
 
-        $msg = $self->render_to_string( 'sms/naver-band', format => 'txt' );
-        chomp $msg;
-        $sent = $sender->send_sms( text => $msg, to => $phone );
-        $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
-
         ## Google Calendar
         my $volunteer = $work->volunteer;
         my $from      = $work->activity_from_date;
@@ -470,7 +465,8 @@ sub _able_hour {
         {
             activity_from_date => {
                 -between => [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
-            }
+            },
+            status => { '!=' => 'canceled' }
         }
     );
 

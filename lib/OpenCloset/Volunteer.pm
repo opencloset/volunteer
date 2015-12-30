@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.12");
+use version; our $VERSION = qv("v0.1.13");
 
 has schema => sub {
     my $self = shift;
@@ -48,29 +48,7 @@ sub startup {
 sub _assets {
     my $self = shift;
 
-    $self->plugin('AssetPack');
-    $self->defaults( js => 'default.js', css => 'screen.css' );
-    $self->asset( 'screen.css' => '/assets/scss/screen.scss' );
-    $self->asset(
-        'bundle.js' => qw{/assets/components/jquery/dist/jquery.js
-            /assets/components/bootstrap/dist/js/bootstrap.js
-            /assets/components/underscore/underscore.js}
-    );
-    $self->asset( 'default.js' => $self->asset->get('bundle.js') );
-    $self->asset(
-        'datepicker.js' => qw{/assets/components/bootstrap-datepicker/dist/js/bootstrap-datepicker.js
-            /assets/components/bootstrap-datepicker/dist/locales/bootstrap-datepicker.kr.min.js}
-    );
-    $self->asset(
-        'work-add.js' => $self->asset->get('bundle.js'),
-        $self->asset->get('datepicker.js'), qw{/assets/components/jQuery-Mask-Plugin/dist/jquery.mask.js
-            /assets/components/bootstrap-validator/dist/validator.min.js
-            /assets/coffee/work-add.coffee}
-    );
-    $self->asset(
-        'work-add.css' => '/assets/components/bootstrap-datepicker/dist/css/bootstrap-datepicker3.min.css',
-        $self->asset->get('screen.css')
-    );
+    $self->defaults( jses => [], csses => [] );
 }
 
 sub _public_routes {
