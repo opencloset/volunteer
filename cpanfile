@@ -1,4 +1,6 @@
+requires 'Config::INI::Reader';
 requires 'Crypt::OpenSSL::RSA';
+requires 'Date::Holidays::KR';
 requires 'DateTime::Format::ISO8601';
 requires 'Email::Sender::Simple';
 requires 'Email::Sender::Transport::SMTP';

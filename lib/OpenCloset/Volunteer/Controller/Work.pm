@@ -21,6 +21,9 @@ has schema => sub { shift->app->schema };
 
 sub add {
     my $self = shift;
+
+    my $now = DateTime->now;
+    $self->render( holidays => [$self->holidays( $now->year )] );
 }
 
 =head2 create
@@ -180,6 +183,7 @@ sub edit {
 
     return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
 
+    my $now  = DateTime->now;
     my $from = $work->activity_from_date;
     my $to   = $work->activity_to_date;
 
@@ -189,6 +193,7 @@ sub edit {
     $filled{'activity-date'}  = $from->ymd;
     $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
     $filled{birth_date} = $volunteer->birth_date->ymd if $volunteer->birth_date;
+    $self->stash( holidays => [$self->holidays( $now->year )] );
     $self->render_fillinform( \%filled );
 }
 
