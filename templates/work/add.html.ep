@@ -50,7 +50,14 @@
       <div class="row">
         <div class="col-xs-4 col-sm-4 col-md-4">
           <div class="form-group">
-            <input type="text" name="activity-date" class="form-control input-lg" placeholder="봉사활동 날짜 Date" data-date-format="yyyy-mm-dd" tabindex="6" required>
+            <input type="text"
+                   name="activity-date"
+                   class="form-control input-lg"
+                   placeholder="봉사활동 날짜 Date"
+                   data-date-format="yyyy-mm-dd"
+                   tabindex="6"
+                   data-holidays="['<%= join('\',\'', @$holidays) %>']"
+                   required>
             <div class="help-block with-errors"></div>
           </div>
         </div>
