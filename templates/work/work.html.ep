@@ -11,20 +11,22 @@
     <hr class="colorgraph">
     <div class="row">
       <div class="col-xs-5 col-sm-5 col-md-5">
-        <dl class="dl-horizontal">
-          <dt>이름</dt>
-          <dd><%= $volunteer->name %></dd>
-          <dt>성별</dt>
-          <dd><%= $volunteer->gender %></dd>
-          <dt>이메일</dt>
-          <dd><%= $volunteer->email %></dd>
-          <dt>생년월일</dt>
-          <dd><%= $volunteer->birth_date ? $volunteer->birth_date->ymd : '' %></dd>
-          <dt>전화번호</dt>
-          <dd><%= $volunteer->phone %></dd>
-          <dt>주소</dt>
-          <dd><%= $volunteer->address %></dd>
-        </dl>
+        <div title="change your avatar" data-toggle="tooltip" data-placement="bottom" class="text-center">
+          <a href="/volunteers/<%= $volunteer->id %>">
+            %= avatar($volunteer->email, size => 230)
+          </a>
+        </div>
+        <h2 class="vcard"><%= $volunteer->name %></h2>
+        <h4 class="vcard"><a href="mailto: <%= $volunteer->email %>"><%= $volunteer->email %></a></h4>
+        <hr>
+        <ul class="vcard vcard-detail">
+          <li><i class="fa fa-<%= $volunteer->gender || 'male' %>"></i> <%= $volunteer->gender %></li>
+          <li><i class="fa fa-birthday-cake"></i> <%= $volunteer->birth_date ? $volunteer->birth_date->ymd : '' %></li>
+          <li><i class="fa fa-phone"></i> <%= $volunteer->phone %></li>
+          <li><i class="fa fa-map-marker"></i> <%= $volunteer->address %></li>
+        </ul>
+
+        <hr>
 
         % if ($guestbook) {
           <h5>방명록</h5>
