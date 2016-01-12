@@ -1,6 +1,8 @@
 package OpenCloset::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
+use Mojo::ByteStream 'b';
+use Mojo::Util 'md5_sum';
 
 use Config::INI::Reader;
 use Date::Holidays::KR ();
@@ -39,6 +41,8 @@ sub register {
     $app->helper( delete_event => \&delete_event );
     $app->helper( send_mail    => \&send_mail );
     $app->helper( holidays     => \&holidays );
+    $app->helper( avatar_url   => \&avatar_url );
+    $app->helper( avatar       => \&avatar );
 }
 
 =head2 error( $status, $error )
@@ -280,6 +284,44 @@ sub holidays {
     }
 
     return sort @holidays;
+}
+
+=head2 avatar_url($email, %options)
+
+avatar.theopencloset.net 에서 C<$email> 에 해당하는 이미지 주소를 얻습니다.
+
+=cut
+
+sub avatar_url {
+    my ( $self, $email, %options ) = @_;
+
+    my $conf    = $self->config->{avatar};
+    my $default = $options{default} || $conf->{default};
+    my $size    = $options{size} // $conf->{size};
+
+    my $url = $conf->{uri} . 'avatar/' . md5_sum($email);
+    $url .= '?s=' . $size;
+    $url .= '&d=' . url_escape($default) if $default;
+    return $url;
+}
+
+=head2 avatar($email, %options)
+
+    # template/example.html.ep
+    %= avatar($email)
+
+    # represent to
+    <img src="https://avatar.theopencloset.net/avatar/22d63f184996c5aef208f1fee0a20d62" alt="avatar" width="80" height="80">
+
+=cut
+
+sub avatar {
+    my ( $self, $email, %options ) = @_;
+
+    my $conf = $self->config->{avatar};
+    my $size = $options{size} || $conf->{size} || 80;
+    my $url  = $self->avatar_url( $email, %options );
+    return b "<img src='$url' alt='avatar' width='$size' height='$size'>";
 }
 
 1;
