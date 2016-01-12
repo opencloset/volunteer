@@ -1,6 +1,6 @@
 % my $volunteer = $work->volunteer;
 % title $volunteer->name;
-% layout 'default';
+% layout 'default', jses => ['/assets/dist/js/work.min.js'];
 
 % my $from      = $work->activity_from_date;
 % my $to        = $work->activity_to_date;
