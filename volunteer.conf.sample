@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 my $SMS_FROM          = '07043257521';
 my $info_address      = 'info@theopencloset.net';
 my $volunteer_address = 'volunteer@theopencloset.net';
@@ -35,4 +36,5 @@ my $volunteer_address = 'volunteer@theopencloset.net';
     email_notify_to             => $info_address,
     email_notify_guestbook_from => $volunteer_address,
     email_notify_guestbook_to   => $volunteer_address,
+    avatar                      => { uri => 'http://localhost:5002/' },
 };
