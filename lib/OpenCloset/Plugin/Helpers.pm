@@ -2,6 +2,8 @@ package OpenCloset::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
+use Config::INI::Reader;
+use Date::Holidays::KR ();
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
@@ -36,6 +38,7 @@ sub register {
     $app->helper( quickAdd     => \&quickAdd );
     $app->helper( delete_event => \&delete_event );
     $app->helper( send_mail    => \&send_mail );
+    $app->helper( holidays     => \&holidays );
 }
 
 =head2 error( $status, $error )
@@ -241,6 +244,42 @@ sub send_mail {
 
     my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
     sendmail( $email, { transport => $transport } );
+}
+
+=head2 holidays( $year )
+
+=over
+
+=item $year - 4 digit string
+
+    my $hashref = $self->holidays(2016);    # KR holidays in 2016
+
+=back
+
+=cut
+
+sub holidays {
+    my ( $self, $year ) = @_;
+    return unless $year;
+
+    my $ini            = $self->app->static->file('misc/extra-holidays.ini');
+    my $extra_holidays = Config::INI::Reader->read_file( $ini->path );
+
+    my @holidays;
+    my $holidays = Date::Holidays::KR::holidays($year);
+    for my $mmdd ( keys %{ $holidays || {} } ) {
+        my $mm = substr $mmdd, 0, 2;
+        my $dd = substr $mmdd, 2;
+        push @holidays, "$year-$mm-$dd";
+    }
+
+    for my $mmdd ( keys %{ $extra_holidays->{$year} || {} } ) {
+        my $mm = substr $mmdd, 0, 2;
+        my $dd = substr $mmdd, 2;
+        push @holidays, "$year-$mm-$dd";
+    }
+
+    return sort @holidays;
 }
 
 1;

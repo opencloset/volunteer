@@ -50,7 +50,14 @@
       <div class="row">
         <div class="col-xs-4 col-sm-4 col-md-4">
           <div class="form-group">
-            <input type="text" name="activity-date" class="form-control input-lg" placeholder="봉사활동 날짜 Date" data-date-format="yyyy-mm-dd" tabindex="6" required>
+            <input type="text"
+                   name="activity-date"
+                   class="form-control input-lg"
+                   placeholder="봉사활동 날짜 Date"
+                   data-date-format="yyyy-mm-dd"
+                   tabindex="6"
+                   data-holidays="['<%= join('\',\'', @$holidays) %>']"
+                   required>
             <div class="help-block with-errors"></div>
           </div>
         </div>
@@ -197,8 +204,8 @@
       <hr class="colorgraph">
 
       <div class="row">
-	<div class="col-xs-6 col-md-6"><input type="submit" value="신청" class="btn btn-primary btn-block btn-lg" tabindex="10"></div>
-        <div class="col-xs-6 col-md-6"><button type="reset" class="btn btn-danger btn-block btn-lg" tabindex="11">다시작성</button></div>
+        <div class="col-xs-6 col-md-6"><button type="reset" class="btn btn-danger btn-block btn-lg" tabindex="10">다시작성</button></div>
+	<div class="col-xs-6 col-md-6"><input type="submit" value="신청" class="btn btn-primary btn-block btn-lg" tabindex="11"></div>
       </div>
     </form>
   </div>
