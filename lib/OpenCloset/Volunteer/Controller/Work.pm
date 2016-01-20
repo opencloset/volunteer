@@ -7,9 +7,8 @@ use Email::Simple;
 use Encode qw/encode_utf8/;
 use String::Random ();
 
-our $MAX_VOLUNTEERS = 6;
-
 has schema => sub { shift->app->schema };
+has max_volunteers => sub { shift->config->{max_volunteers} || 4 };
 
 =head1 METHODS
 
@@ -488,7 +487,7 @@ sub _able_hour {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;
         for my $hour ( $start .. $end ) {
-            if ( $schedule{$hour} && $schedule{$hour} >= $MAX_VOLUNTEERS ) {
+            if ( $schedule{$hour} && $schedule{$hour} >= $self->max_volunteers ) {
                 $able = 0;
                 last;
             }
