@@ -7,7 +7,7 @@ use SMS::Send;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.1.14");
+use version; our $VERSION = qv("v0.1.15");
 
 has schema => sub {
     my $self = shift;
@@ -55,7 +55,7 @@ sub _public_routes {
     my $self = shift;
     my $r    = $self->routes;
 
-    $r->get('/')->to( cb => sub { shift->redirect_to('work.add') } );
+    $r->get('/')->to('root#home')->name('home');
 
     my $works = $r->under('/works');
     $works->get('/new')->to('work#add')->name('work.add');
