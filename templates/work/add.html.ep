@@ -58,6 +58,9 @@
                    tabindex="6"
                    data-holidays="['<%= join('\',\'', @$holidays) %>']"
                    required>
+            <div class="help-block">
+              매주 화목은 정기적인 기업봉사일입니다.
+            </div>
             <div class="help-block with-errors"></div>
           </div>
         </div>
