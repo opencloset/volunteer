@@ -342,7 +342,7 @@ sub update_status {
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
-    elsif ( $status eq 'canceled' ) {
+    elsif ( $status =~ /canceled|drop/ ) {
         my $event_id = $work->event_id;
         $self->delete_event($event_id) if $event_id;
     }
