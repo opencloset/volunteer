@@ -22,3 +22,6 @@ $ ->
           $(@).prop('disabled', true) unless data[value]
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
+
+  $('.agree').click ->
+    $(@).prev().prop('checked', true)
