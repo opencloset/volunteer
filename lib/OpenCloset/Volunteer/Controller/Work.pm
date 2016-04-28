@@ -83,6 +83,7 @@ sub create {
     my $parser = $self->schema->storage->datetime_parser;
     my $rs     = $self->schema->resultset('VolunteerWork')->search(
         {
+            volunteer_id       => $volunteer->id,
             activity_from_date => {
                 -between => [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
             },
