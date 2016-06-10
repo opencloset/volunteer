@@ -34,7 +34,6 @@ sub startup {
     my $self = shift;
 
     $self->plugin('Config');
-    $self->plugin('FillInFormLite');
     $self->plugin('OpenCloset::Plugin::Helpers');
     $self->secrets( [$ENV{VOLUNTEER_SECRET} || time] );
     $self->sessions->cookie_name( $self->app->moniker );
