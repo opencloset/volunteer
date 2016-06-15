@@ -104,6 +104,12 @@
               <input type="radio" name="need_1365" value="0"> 아니오
             </label>
           </div>
+
+          <div class="form-group">
+            <p class="help-block">1365 승인이 필요하신 분은 1365 로그인 아이디를 적어주세요</p>
+          </div>
+          <input type="text" name="org_username" class="form-control" placeholder="1365 로그인 아이디">
+          <hr>
         </div>
         <div class="col-xs-6 col-sm-6 col-md-6">
           <div class="form-group">
@@ -112,7 +118,7 @@
               1365 홈페이지에서 신청서를 작성하셨습니까?
             </p>
             <p class="help-block">
-              자원봉사시간 인증이 필요한 봉사자님은 본 신청서를 작성하신 후, 추가적으로 <a href="http://www.1365.go.kr/nanum/prtl/web/vols/vol/selectWrkView.do?menuNo=P9130&progrmRegistNo=1715602" target="_blank">1365 홈페이지</a>에서 열린옷장에 봉사신청을 작성해 주시기 바랍니다. 봉사시간 인증은 <a href="http://www.1365.go.kr/nanum/prtl/web/vols/vol/selectWrkView.do?menuNo=P9130&progrmRegistNo=1715602" target="_blank">1365 홈페이지</a>에서 신청을 하신 분에게만 승인이 가능합니다.
+              자원봉사시간 인증이 필요한 봉사자님은 본 신청서를 작성하신 후, 추가적으로 <a href="http://www.1365.go.kr/nanum/prtl/web/vols/vol/selectWrkList.do?menuNo=P9130&schProgrmNm=열린옷장" target="_blank">1365 홈페이지</a>에서 열린옷장에 봉사신청을 작성해 주시기 바랍니다. 봉사시간 인증은 <a href="http://www.1365.go.kr/nanum/prtl/web/vols/vol/selectWrkList.do?menuNo=P9130&schProgrmNm=열린옷장" target="_blank">1365 홈페이지</a>에서 신청을 하신 분에게만 승인이 가능합니다.
             </p>
           </div>
 

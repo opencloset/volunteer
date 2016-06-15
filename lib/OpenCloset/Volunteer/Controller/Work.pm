@@ -5,6 +5,7 @@ use DateTime::Format::ISO8601;
 use DateTime;
 use Email::Simple;
 use Encode qw/encode_utf8/;
+use HTML::FillInForm::Lite;
 use String::Random ();
 
 has schema => sub { shift->app->schema };
@@ -50,6 +51,7 @@ sub create {
     my $address        = $v->param('address');
     my $activity_hours = $v->param('activity-hours');
     my $need_1365      = $v->param('need_1365');
+    my $org_username   = $v->param('org_username');
     my $_1365          = $v->param('1365');
     my $period         = $v->param('period');
     my $talent         = $v->param('talent');
@@ -99,6 +101,7 @@ sub create {
             activity_from_date => "$activity_date $from:00:00",
             activity_to_date   => "$activity_date $to:00:00",
             need_1365          => $need_1365,
+            org_username       => $org_username,
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
@@ -206,7 +209,10 @@ sub edit {
     $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
     $filled{birth_date} = $volunteer->birth_date->ymd if $volunteer->birth_date;
     $self->stash( holidays => [$self->holidays( $now->year )] );
-    $self->render_fillinform( \%filled );
+
+    my $html = $self->render_to_string( 'work/edit', format => 'html' );
+    my $fill = HTML::FillInForm::Lite->new;
+    $self->render( text => $fill->fill( \$html, \%filled ), format => 'html' );
 }
 
 =head2 update
@@ -234,6 +240,7 @@ sub update {
     my $activity_date  = $v->param('activity-date');
     my $activity_hours = $v->param('activity-hours');
     my $need_1365      = $v->param('need_1365');
+    my $org_username   = $v->param('org_username');
     my $period         = $v->param('period');
     my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
@@ -248,6 +255,7 @@ sub update {
             activity_from_date => "$activity_date $from:00:00",
             activity_to_date   => "$activity_date $to:00:00",
             need_1365          => $need_1365,
+            org_username       => $org_username,
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
@@ -464,6 +472,7 @@ sub _validate_volunteer_work {
     $v->required('activity-date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
     $v->optional('need_1365');
+    $v->optional('org_username');
     $v->optional('1365');
     $v->required('reason');
     $v->required('path');
