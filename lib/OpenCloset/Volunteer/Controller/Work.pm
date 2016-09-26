@@ -66,7 +66,8 @@ sub create {
     return $self->error( 400, "Not allow activity hours: $activity_hours" ) unless $able_hours->{$activity_hours};
 
     my $dt = DateTime::Format::ISO8601->parse_datetime($activity_date);
-    return $self->error( 400, "Not allow activity date: Sunday" ) if $dt->day_abbr =~ /Sun/;
+    ## now Sunday is working day.
+    ## return $self->error( 400, "Not allow activity date: Sunday" ) if $dt->day_abbr =~ /Sun/;
 
     my $schema    = $self->schema;
     my $volunteer = $schema->resultset('Volunteer')->find_or_create(
