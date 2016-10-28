@@ -52,7 +52,6 @@ sub create {
     my $activity_hours = $v->param('activity-hours');
     my $need_1365      = $v->param('need_1365');
     my $org_username   = $v->param('org_username');
-    my $_1365          = $v->param('1365');
     my $period         = $v->param('period');
     my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
@@ -122,14 +121,6 @@ sub create {
     chomp $msg;
     my $sent = $sender->send_sms( text => $msg, to => $phone );
     $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
-
-    ## 1365 봉사신청안내
-    if ( $need_1365 && !$_1365 ) {
-        $msg = $self->render_to_string( 'sms/1365-guide', format => 'txt', work => $work );
-        chomp $msg;
-        $sent = $sender->send_sms( text => $msg, to => $phone );
-        $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
-    }
 
     my $email = Email::Simple->create(
         header => [
@@ -474,7 +465,6 @@ sub _validate_volunteer_work {
     $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
     $v->optional('need_1365');
     $v->optional('org_username');
-    $v->optional('1365');
     $v->required('reason');
     $v->required('path');
     $v->required('job');
