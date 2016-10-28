@@ -25,3 +25,15 @@ $ ->
 
   $('.agree').click ->
     $(@).prev().prop('checked', true)
+
+  $('form[data-toggle]').validator({
+    custom:
+      highteen: ($el) ->
+        ymd = $el.val()
+        yyyy = ymd.substr(0, 4)
+        return unless yyyy
+        return false unless yyyy.length is 4
+        return new Date().getFullYear() - yyyy + 1 >= 17
+    errors:
+      highteen: '17세(고등학생)이상 봉사신청이 가능합니다'
+  })
