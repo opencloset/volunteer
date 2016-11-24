@@ -1,0 +1,19 @@
+% title '자원봉사 신청 취소';
+% layout 'default', jses => ['/assets/dist/js/work-cancel.min.js'];
+
+% my $from = $work->activity_from_date;
+% my $to   = $work->activity_to_date;
+
+<div class="row">
+  <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
+    <h2>봉사활동 취소 <small>열린옷장</small></h2>
+    <hr class="colorgraph">
+    <h4><%= $volunteer->name %><small>님 열린옷장 봉사활동을 취소하시겠습니까?</small></h4>
+    <p>
+      일시: <%= $from->month %>월 <%= $from->day %>일 <%= $from->hour %>시 ~ <%= $to->hour %>시
+    </p>
+    <p>
+      <button id="btn-cancel" class="btn btn-danger" data-url="<%= url_for('/works/' . $work->id . '/status') %>">네, 취소 하겠습니다</button>
+    </p>
+  </div>
+</div>

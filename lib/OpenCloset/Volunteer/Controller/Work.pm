@@ -177,6 +177,26 @@ sub work {
     $self->render( works => [$works->all], guestbook => $guestbook );
 }
 
+=head2 cancel
+
+    # work.cancel
+    GET /works/:id/cancel?phone=xxxx (뒷자리)
+
+=cut
+
+sub cancel {
+    my $self      = shift;
+    my $work      = $self->stash('work');
+    my $phone     = $self->param('phone');
+    my $volunteer = $work->volunteer;
+
+    return $self->error( 400, '본인확인을 할 수 없습니다.' ) unless $phone;
+    return $self->error( 400, '신청자의 휴대폰번호와 일치하지 않습니다.' )
+        if substr( $volunteer->phone, -4 ) ne $phone;
+
+    $self->stash( volunteer => $volunteer );
+}
+
 =head2 edit
 
     # work.edit
