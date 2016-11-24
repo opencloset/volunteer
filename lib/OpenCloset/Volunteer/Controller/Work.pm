@@ -369,6 +369,22 @@ sub update_status {
     elsif ( $status =~ /canceled|drop/ ) {
         my $event_id = $work->event_id;
         $self->delete_event($event_id) if $event_id;
+
+        if ( $from_status eq 'approved' ) {
+            my $email = Email::Simple->create(
+                header => [
+                    From => $self->config->{email_notify_from},
+                    To   => $self->config->{email_notify_to},
+                    Subject =>
+                        sprintf(
+                        "[열린옷장 승인된 봉사활동 취소] %s님이 봉사활동을 취소하였습니다.",
+                        $volunteer->name ),
+                ],
+                body => '--',
+            );
+            $self->log->debug( $email->as_string );
+            $self->send_mail( encode_utf8( $email->as_string ) );
+        }
     }
 
     $self->render( json => { $work->get_columns } );
