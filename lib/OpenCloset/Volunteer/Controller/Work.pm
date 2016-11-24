@@ -333,13 +333,14 @@ sub update_status {
     my $volunteer = $work->volunteer;
 
     my $origin = $self->req->headers->header('origin');
-    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
+    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin || '' );
 
     my $validation = $self->validation;
     $validation->required('status')->in(qw/reported approved done canceled drop/);
     return $self->error( 400, 'Parameter Validation Failed' ) if $validation->has_error;
 
-    my $status = $validation->param('status');
+    my $from_status = $work->status;
+    my $status      = $validation->param('status');
     $work->update( { status => $status } );
 
     my $sender = $self->app->sms_sender;
