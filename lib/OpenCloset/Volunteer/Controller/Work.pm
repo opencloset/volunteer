@@ -52,6 +52,7 @@ sub create {
     my $activity_hours = $v->param('activity-hours');
     my $need_1365      = $v->param('need_1365');
     my $org_username   = $v->param('org_username');
+    my $org_region     = $v->param('org_region');
     my $period         = $v->param('period');
     my $talent         = $v->param('talent');
     my $comment        = $v->param('comment');
@@ -102,6 +103,7 @@ sub create {
             activity_to_date   => "$activity_date $to:00:00",
             need_1365          => $need_1365,
             org_username       => $org_username,
+            org_region         => $org_region,
             period             => $period,
             reason             => join( '|', @$reasons ),
             path               => join( '|', @$paths ),
@@ -465,6 +467,7 @@ sub _validate_volunteer_work {
     $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
     $v->optional('need_1365');
     $v->optional('org_username');
+    $v->optional('org_region');
     $v->required('reason');
     $v->required('path');
     $v->required('job');
