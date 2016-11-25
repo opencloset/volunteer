@@ -18,4 +18,4 @@ requires 'String::Random';
 requires 'Try::Tiny';
 
 # cpan.theopencloset.net
-requires 'OpenCloset::Schema' => '0.036';
+requires 'OpenCloset::Schema' => '0.041';

@@ -128,7 +128,7 @@
               <small>(클릭해서 이미지를 확인해보세요)</small>
             </p>
           </div>
-          <input type="text" name="misc" class="form-control" placeholder="서울특별시 광진구">
+          <input type="text" name="org_region" class="form-control" placeholder="서울특별시 광진구">
           <hr>
         </div>
       </div>

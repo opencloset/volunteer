@@ -112,7 +112,7 @@
           <div class="form-group">
             <p class="help-block">1365 승인이 필요하신 분은 1365 로그인 아이디를 적어주세요</p>
           </div>
-          <input type="text" name="org_username" class="form-control" placeholder="1365 로그인 아이디">
+          <input type="text" name="org_username" class="form-control" placeholder="1365 로그인 아이디" value="<%= $work->org_username %>">
           <hr>
 
           <div class="form-group">
@@ -124,7 +124,7 @@
               <small>(클릭해서 이미지를 확인해보세요)</small>
             </p>
           </div>
-          <input type="text" name="misc" class="form-control" placeholder="서울특별시 광진구">
+          <input type="text" name="org_region" class="form-control" placeholder="서울특별시 광진구" value="<%= $work->org_region %>">
           <hr>
         </div>
       </div>
