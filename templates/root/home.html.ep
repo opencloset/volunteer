@@ -2,7 +2,7 @@
 % title '열린옷장 자원봉사';
 
 <div class="text-center">
-  <img class="img-rounded" alt="" src="/assets/img/intro2.png">
+  <img class="img-rounded" alt="" src="/assets/img/intro2.png" style="max-width: 100%; height: auto;">
 </div>
 
 <div class="text-center">
