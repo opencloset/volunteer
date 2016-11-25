@@ -177,6 +177,26 @@ sub work {
     $self->render( works => [$works->all], guestbook => $guestbook );
 }
 
+=head2 cancel
+
+    # work.cancel
+    GET /works/:id/cancel?phone=xxxx (뒷자리)
+
+=cut
+
+sub cancel {
+    my $self      = shift;
+    my $work      = $self->stash('work');
+    my $phone     = $self->param('phone');
+    my $volunteer = $work->volunteer;
+
+    return $self->error( 400, '본인확인을 할 수 없습니다.' ) unless $phone;
+    return $self->error( 400, '신청자의 휴대폰번호와 일치하지 않습니다.' )
+        if substr( $volunteer->phone, -4 ) ne $phone;
+
+    $self->stash( volunteer => $volunteer );
+}
+
 =head2 edit
 
     # work.edit
@@ -313,13 +333,14 @@ sub update_status {
     my $volunteer = $work->volunteer;
 
     my $origin = $self->req->headers->header('origin');
-    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
+    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin || '' );
 
     my $validation = $self->validation;
     $validation->required('status')->in(qw/reported approved done canceled drop/);
     return $self->error( 400, 'Parameter Validation Failed' ) if $validation->has_error;
 
-    my $status = $validation->param('status');
+    my $from_status = $work->status;
+    my $status      = $validation->param('status');
     $work->update( { status => $status } );
 
     my $sender = $self->app->sms_sender;
@@ -339,15 +360,29 @@ sub update_status {
         my $volunteer = $work->volunteer;
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
-        my $text      = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
-            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
-        $self->log->debug($text);
+        my $text = sprintf "%s %s on %s %s%s-%s%s", $volunteer->name, $from->month_name, $from->day, $from->hour_12,
+            $from->am_or_pm, $to->hour_12, $to->am_or_pm;
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
     elsif ( $status =~ /canceled|drop/ ) {
         my $event_id = $work->event_id;
         $self->delete_event($event_id) if $event_id;
+
+        if ( $from_status eq 'approved' ) {
+            my $email = Email::Simple->create(
+                header => [
+                    From => $self->config->{email_notify_from},
+                    To   => $self->config->{email_notify_to},
+                    Subject =>
+                        sprintf(
+                        "[열린옷장 승인된 봉사활동 취소] %s님이 봉사활동을 취소하였습니다.",
+                        $volunteer->name ),
+                ],
+                body => '--',
+            );
+            $self->send_mail( encode_utf8( $email->as_string ) );
+        }
     }
 
     $self->render( json => { $work->get_columns } );

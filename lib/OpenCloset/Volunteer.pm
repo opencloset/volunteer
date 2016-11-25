@@ -63,6 +63,7 @@ sub _public_routes {
 
     my $work = $works->under('/:id')->to('work#find_work');
     $work->get('/')->to('work#work')->name('work');
+    $work->get('/cancel')->to('work#cancel')->name('work.cancel');
     $work->get('/edit')->to('work#edit')->name('work.edit');
     $work->post('/')->to('work#update')->name('work.update');
     $work->options('/status')->to('work#preflight_cors');
