@@ -1,3 +1,6 @@
+$.facebox.settings.closeImage   = '/assets/components/facebox/src/closelabel.png'
+$.facebox.settings.loadingImage = '/assets/components/facebox/src/loading.gif'
+
 $ ->
   holidays = eval $("input[name=activity-date]").data('holidays')
   $('input[name=birth_date]').mask('0000-00-00')
@@ -37,3 +40,5 @@ $ ->
     errors:
       highteen: '17세(고등학생)이상 봉사신청이 가능합니다'
   })
+
+  $('a[rel*=facebox]').facebox()
