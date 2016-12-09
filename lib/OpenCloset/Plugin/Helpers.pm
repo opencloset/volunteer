@@ -246,37 +246,41 @@ sub send_mail {
     sendmail( $email, { transport => $transport } );
 }
 
-=head2 holidays( $year )
+=head2 holidays( @years )
 
 =over
 
-=item $year - 4 digit string
+=item @years - 4 digit string
 
-    my $hashref = $self->holidays(2016);    # KR holidays in 2016
+    my $hashref = $self->holidays(2016);          # KR holidays in 2016
+    my $hashref = $self->holidays(2016, 2017);    # KR holidays in 2016 and 2017
 
 =back
 
 =cut
 
 sub holidays {
-    my ( $self, $year ) = @_;
-    return unless $year;
+    my ( $self, @years ) = @_;
+    return unless @years;
 
     my $ini            = $self->app->static->file('misc/extra-holidays.ini');
     my $extra_holidays = Config::INI::Reader->read_file( $ini->path );
 
     my @holidays;
-    my $holidays = Date::Holidays::KR::holidays($year);
-    for my $mmdd ( keys %{ $holidays || {} } ) {
-        my $mm = substr $mmdd, 0, 2;
-        my $dd = substr $mmdd, 2;
-        push @holidays, "$year-$mm-$dd";
-    }
 
-    for my $mmdd ( keys %{ $extra_holidays->{$year} || {} } ) {
-        my $mm = substr $mmdd, 0, 2;
-        my $dd = substr $mmdd, 2;
-        push @holidays, "$year-$mm-$dd";
+    for my $year (@years) {
+        my $holidays = Date::Holidays::KR::holidays($year);
+        for my $mmdd ( keys %{ $holidays || {} } ) {
+            my $mm = substr $mmdd, 0, 2;
+            my $dd = substr $mmdd, 2;
+            push @holidays, "$year-$mm-$dd";
+        }
+
+        for my $mmdd ( keys %{ $extra_holidays->{$year} || {} } ) {
+            my $mm = substr $mmdd, 0, 2;
+            my $dd = substr $mmdd, 2;
+            push @holidays, "$year-$mm-$dd";
+        }
     }
 
     return sort @holidays;
