@@ -22,8 +22,10 @@ has max_volunteers => sub { shift->config->{max_volunteers} || 4 };
 sub add {
     my $self = shift;
 
-    my $now = DateTime->now;
-    $self->render( holidays => [$self->holidays( $now->year )] );
+    my $now  = DateTime->now;
+    my $year = $now->year;
+
+    $self->render( holidays => [$self->holidays( $year, $year + 1 )] );
 }
 
 =head2 create
@@ -213,6 +215,7 @@ sub edit {
     return $self->error( 400, 'Wrong authcode' ) if $authcode ne $work->authcode;
 
     my $now  = DateTime->now;
+    my $year = $now->year;
     my $from = $work->activity_from_date;
     my $to   = $work->activity_to_date;
 
@@ -222,7 +225,7 @@ sub edit {
     $filled{'activity-date'}  = $from->ymd;
     $filled{'activity-hours'} = $from->hour . '-' . $to->hour;
     $filled{birth_date} = $volunteer->birth_date->ymd if $volunteer->birth_date;
-    $self->stash( holidays => [$self->holidays( $now->year )] );
+    $self->stash( holidays => [$self->holidays( $year, $year + 1 )] );
 
     my $html = $self->render_to_string( 'work/edit', format => 'html' );
     my $fill = HTML::FillInForm::Lite->new;
