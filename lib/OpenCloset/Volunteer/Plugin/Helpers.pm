@@ -1,9 +1,7 @@
-package OpenCloset::Plugin::Helpers;
+package OpenCloset::Volunteer::Plugin::Helpers;
 
 use Mojo::Base 'Mojolicious::Plugin';
 
-use Config::INI::Reader;
-use Date::Holidays::KR ();
 use Email::Sender::Simple qw(sendmail);
 use Email::Sender::Transport::SMTP qw();
 use HTTP::Tiny;
@@ -16,14 +14,14 @@ use Try::Tiny;
 
 =head1 NAME
 
-OpenCloset::Plugin::Helpers
+OpenCloset::Volunteer::Plugin::Helpers
 
 =head1 SYNOPSIS
 
     # Mojolicious::Lite
-    plugin 'Evid::Plugin::Helpers';
+    plugin 'OpenCloset::Volunteer::Plugin::Helpers';
     # Mojolicious
-    $self->plugin('OpenCloset::Plugin::Helpers');
+    $self->plugin('OpenCloset::Volunteer::Plugin::Helpers');
 
 =head1 HELPERS
 
@@ -38,7 +36,6 @@ sub register {
     $app->helper( quickAdd     => \&quickAdd );
     $app->helper( delete_event => \&delete_event );
     $app->helper( send_mail    => \&send_mail );
-    $app->helper( holidays     => \&holidays );
 }
 
 =head2 error( $status, $error )
@@ -244,46 +241,6 @@ sub send_mail {
 
     my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
     sendmail( $email, { transport => $transport } );
-}
-
-=head2 holidays( @years )
-
-=over
-
-=item @years - 4 digit string
-
-    my $hashref = $self->holidays(2016);          # KR holidays in 2016
-    my $hashref = $self->holidays(2016, 2017);    # KR holidays in 2016 and 2017
-
-=back
-
-=cut
-
-sub holidays {
-    my ( $self, @years ) = @_;
-    return unless @years;
-
-    my $ini            = $self->app->static->file('misc/extra-holidays.ini');
-    my $extra_holidays = Config::INI::Reader->read_file( $ini->path );
-
-    my @holidays;
-
-    for my $year (@years) {
-        my $holidays = Date::Holidays::KR::holidays($year);
-        for my $mmdd ( keys %{ $holidays || {} } ) {
-            my $mm = substr $mmdd, 0, 2;
-            my $dd = substr $mmdd, 2;
-            push @holidays, "$year-$mm-$dd";
-        }
-
-        for my $mmdd ( keys %{ $extra_holidays->{$year} || {} } ) {
-            my $mm = substr $mmdd, 0, 2;
-            my $dd = substr $mmdd, 2;
-            push @holidays, "$year-$mm-$dd";
-        }
-    }
-
-    return sort @holidays;
 }
 
 1;

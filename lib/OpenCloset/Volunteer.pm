@@ -35,6 +35,7 @@ sub startup {
 
     $self->plugin('Config');
     $self->plugin('OpenCloset::Plugin::Helpers');
+    $self->plugin('OpenCloset::Volunteer::Plugin::Helpers');
     $self->secrets( [$ENV{VOLUNTEER_SECRET} || time] );
     $self->sessions->cookie_name( $self->app->moniker );
     $self->sessions->default_expiration(86400);

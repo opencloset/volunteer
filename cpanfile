@@ -19,4 +19,4 @@ requires 'Try::Tiny';
 
 # cpan.theopencloset.net
 requires 'OpenCloset::Schema'          => '0.041';
-requires 'OpenCloset::Plugin::Helpers' => 'v0.0.8';
+requires 'OpenCloset::Plugin::Helpers' => 'v0.0.9';
