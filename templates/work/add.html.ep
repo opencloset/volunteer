@@ -116,20 +116,6 @@
             <p class="help-block">1365 승인이 필요하신 분은 1365 로그인 아이디를 적어주세요</p>
           </div>
           <input type="text" name="org_username" class="form-control" placeholder="1365 로그인 아이디">
-
-          <hr>
-
-          <div class="form-group">
-            <p class="help-block">
-              <i class="fa fa-question-circle fa-fw" aria-hidden="true"></i>
-              <a href="<%= url_for('/assets/img/1365-소속센터.png') %>" rel="facebox">
-                1365 소속센터
-              </a>를 입력해주세요
-              <small>(클릭해서 이미지를 확인해보세요)</small>
-            </p>
-          </div>
-          <input type="text" name="org_region" class="form-control" placeholder="서울특별시 광진구">
-          <hr>
         </div>
       </div>
 
