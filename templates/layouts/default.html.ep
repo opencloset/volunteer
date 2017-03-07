@@ -31,5 +31,6 @@
     % for my $js (@$jses) {
       <script src="<%= $js %>"></script>
     % }
+    %= footer
   </body>
 </html>
