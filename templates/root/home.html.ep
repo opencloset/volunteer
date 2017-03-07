@@ -1,10 +1,72 @@
-% layout 'home';
+% layout 'default';
 % title '열린옷장 자원봉사';
 
-<div class="text-center">
-  <img class="img-rounded" alt="" src="/assets/img/intro3.jpg" style="max-width: 100%; height: auto;">
-</div>
+<h2 class="text-center">
+  %= title
+</h2>
 
-<div class="text-center">
-  <a class="btn btn-success btn-lg btn-block btn-2x" href="<%= url_for('work.add') %>">자원봉사 신청</a>
+<hr class="colorgraph">
+
+<div class="row">
+  <div class="col-md-offset-3 col-md-3 bg-success">
+    <h2><span class="text-danger">매일매일</span> 열린옷장 자원봉사</h2>
+    <p>
+      요건
+      <ul>
+        <li>17세 이상이라면 누구나!</li>
+        <li>한 달 이내 최소 2회 활동 권장!</li>
+      </ul>
+    </p>
+    <p>
+      활동장소:
+      <a href="http://naver.me/5shqhf1j" target="_blank">
+        <i class="fa fa-map-marker" aria-hidden="true"></i>
+        건대입구 열린옷장
+      </a>
+    </p>
+    <p>
+      활동내용
+      <small>
+        아래 활동 중 상황에 따라 임의 배정 됩니다.
+      </small>
+      <ul>
+        <li>대여 의류 포장하기</li>
+        <li>의류 관리(다림질, 구두 닦기, 의류 정리 등)</li>
+        <li>기증/대여 메시지 입력 및 분류 작업</li>
+        <li>기증자/대여자를 위한 선물 만들기</li>
+      </ul>
+    </p>
+    <p>
+      <a class="btn btn-primary btn-lg btn-block" href="<%= url_for('work.add') %>">열린옷장 자원봉사 신청</a>
+    </p>
+  </div>
+  <div class="col-md-3 bg-info">
+    <h2>매주 <span class="text-danger">목요일</span> 열린사진관 정기봉사</h2>
+    <p>
+      매주 목요일 반짝! '열린 사진관'
+    </p>
+    <p>
+      취준생의 이력서용 사진촬영비 대폭 인하 프로젝트!
+    </p>
+    <p>
+      취업준비생을 위한 활동에 함께해주세요.
+    </p>
+    <ul>
+      <li>활동시간: 매주 목요일 10시 ~ 18시</li>
+      <li>요건: 한 달 이상 활동 가능하다면 누구나!</li>
+      <li>
+        활동장소:
+        <a href="http://naver.me/5DUdRmAV" target="_blank">
+          <i class="fa fa-map-marker" aria-hidden="true"></i>
+          홍대 바라봄 사진관
+        </a>
+      </li>
+      <li>활동 내용: 촬영 의류 준비 / 현장 관리</li>
+      <li>활동 혜택: 한 달 이상 활동 시 증명사진 촬영</li>
+    </ul>
+    <hr>
+    <p>
+      <a class="btn btn-success btn-lg btn-block" href="https://docs.google.com/a/theopencloset.net/forms/d/e/1FAIpQLSfvPe98NYrqZuPmtFnbSZFld6u5Pc1_i7D4pZHj28r1MTmIcA/viewform">열린사진관 자원봉사 신청</a>
+    </p>
+  </div>
 </div>
