@@ -8,8 +8,8 @@
 <hr class="colorgraph">
 
 <div class="row">
-  <div class="col-md-offset-3 col-md-3 bg-success">
-    <h2><span class="text-danger">매일매일</span> 열린옷장 자원봉사</h2>
+  <div class="col-md-offset-3 col-md-3 bg-success panel-a">
+    <h2><span class="text-danger">매일매일</span> <br>열린옷장 자원봉사</h2>
     <p>
       요건
       <ul>
@@ -40,8 +40,8 @@
       <a class="btn btn-primary btn-lg btn-block" href="<%= url_for('work.add') %>">열린옷장 자원봉사 신청</a>
     </p>
   </div>
-  <div class="col-md-3 bg-info">
-    <h2>매주 <span class="text-danger">목요일</span> 열린사진관 정기봉사</h2>
+  <div class="col-md-3 bg-info panel-a">
+    <h2>매주 <span class="text-danger">목요일</span> <br>홍대 열린사진관 자원봉사</h2>
     <p>
       매주 목요일 반짝! '열린 사진관'
     </p>
@@ -53,7 +53,7 @@
     </p>
     <ul>
       <li>활동시간: 매주 목요일 10시 ~ 18시</li>
-      <li>요건: 한 달 이상 활동 가능하다면 누구나!</li>
+      <li>요건: 한 달(주 1회, 총 4회)이상 활동 가능하다면 누구나!</li>
       <li>
         활동장소:
         <a href="http://naver.me/5DUdRmAV" target="_blank">
