@@ -9,7 +9,6 @@ use HTML::FillInForm::Lite;
 use String::Random ();
 
 has schema => sub { shift->app->schema };
-has max_volunteers => sub { shift->config->{max_volunteers} || 4 };
 
 =head1 METHODS
 
@@ -518,8 +517,10 @@ sub _validate_volunteer_work {
 sub _able_hour {
     my ( $self, $ymd ) = @_;
     my ( $year, $mm, $dd ) = split /-/, $ymd;
+
+    my $tz     = $self->config->{timezone};
     my $parser = $self->schema->storage->datetime_parser;
-    my $dt     = DateTime->new( year => $year, month => $mm, day => $dd );
+    my $dt     = DateTime->new( year => $year, month => $mm, day => $dd, time_zone => $tz );
     my $rs     = $self->schema->resultset('VolunteerWork')->search(
         {
             activity_from_date => {
@@ -536,13 +537,18 @@ sub _able_hour {
         $schedule{$_}++ for ( $from->hour .. $to->hour );
     }
 
+    my $dow            = $dt->day_of_week;                  # 1-7 (Monday is 1)
+    my $max_volunteers = $self->config->{max_volunteers};
+
     my %result;
     my @templates = qw/10-11 10-12 10-13 14-18 10-16 10-17 10-18/;
     for my $template (@templates) {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;
         for my $hour ( $start .. $end ) {
-            if ( $schedule{$hour} && $schedule{$hour} >= $self->max_volunteers ) {
+            my $max
+                = defined $max_volunteers->{$dow}{$hour} ? $max_volunteers->{$dow}{$hour} : $max_volunteers->{default};
+            if ( $schedule{$hour} && $schedule{$hour} >= $max ) {
                 $able = 0;
                 last;
             }
