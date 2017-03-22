@@ -18,5 +18,5 @@ requires 'String::Random';
 requires 'Try::Tiny';
 
 # cpan.theopencloset.net
-requires 'OpenCloset::Schema',          '0.041';
+requires 'OpenCloset::Schema',          '0.047';
 requires 'OpenCloset::Plugin::Helpers', 'v0.0.14';

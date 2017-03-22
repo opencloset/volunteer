@@ -37,7 +37,7 @@
       </ul>
     </p>
     <p>
-      <a class="btn btn-primary btn-lg btn-block" href="<%= url_for('work.add') %>">열린옷장 자원봉사 신청</a>
+      <a class="btn btn-primary btn-lg btn-block btn-target-a" href="<%= url_for('work.add') %>">열린옷장 자원봉사 신청</a>
     </p>
   </div>
   <div class="col-md-3 bg-info panel-a">
@@ -53,7 +53,7 @@
     </p>
     <ul>
       <li>활동시간: 매주 목요일 10시 ~ 18시</li>
-      <li>요건: 한 달(주 1회, 총 4회)이상 활동 가능하다면 누구나!</li>
+      <li>요건: 1회 이상 활동 가능하다면 누구나!</li>
       <li>
         활동장소:
         <a href="http://naver.me/5DUdRmAV" target="_blank">
@@ -63,9 +63,14 @@
       </li>
       <li>활동 내용: 촬영 의류 준비 / 현장 관리</li>
       <li>활동 혜택: 한 달 이상 활동 시 증명사진 촬영</li>
+      <li>
+        <a href="http://blog.theopencloset.net/220693152487">열린사진관의 상세내용이 궁금하다면?</a>
+      </li>
+      <li>
+        <a href="https://www.facebook.com/facespeakawake/videos/296703744020120/">닷페이스 열린사진관 현장영상 보기</a>
+      </li>
     </ul>
-    <hr>
-    <p>
+    <p class="text-center">
       <a class="btn btn-success btn-lg btn-block" href="https://docs.google.com/a/theopencloset.net/forms/d/e/1FAIpQLSfvPe98NYrqZuPmtFnbSZFld6u5Pc1_i7D4pZHj28r1MTmIcA/viewform">열린사진관 자원봉사 신청</a>
     </p>
   </div>
