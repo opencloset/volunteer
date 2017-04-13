@@ -43,87 +43,92 @@ sub create {
         return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
     }
 
-    my $name           = $v->param('name');
-    my $gender         = $v->param('gender');
-    my $activity_date  = $v->param('activity-date');
-    my $email_addr     = $v->param('email');
-    my $birth_date     = $v->param('birth_date');
-    my $phone          = $v->param('phone');
-    my $address        = $v->param('address');
-    my $activity_hours = $v->param('activity-hours');
-    my $need_1365      = $v->param('need_1365');
-    my $org_username   = $v->param('org_username');
-    my $org_region     = $v->param('org_region');
-    my $period         = $v->param('period');
-    my $talent         = $v->param('talent');
-    my $comment        = $v->param('comment');
-    my $activity       = $v->param('activity');
-    my $reasons        = $v->every_param('reason');
-    my $paths          = $v->every_param('path');
-    my $job            = $v->param('job');
-    my ( $from, $to ) = split /-/, $activity_hours;
+    my $name   = $v->param('name');
+    my $gender = $v->param('gender');
 
-    my $able_hours = $self->_able_hour($activity_date);
-    return $self->error( 400, "Not allow activity hours: $activity_hours" ) unless $able_hours->{$activity_hours};
+    my $activity_datetime = $v->every_param('activity-datetime');
 
-    my $dt = DateTime::Format::ISO8601->parse_datetime($activity_date);
-    ## now Sunday is working day.
-    ## return $self->error( 400, "Not allow activity date: Sunday" ) if $dt->day_abbr =~ /Sun/;
+    my $email_addr   = $v->param('email');
+    my $birth_date   = $v->param('birth_date');
+    my $phone        = $v->param('phone');
+    my $address      = $v->param('address');
+    my $need_1365    = $v->param('need_1365');
+    my $org_username = $v->param('org_username');
+    my $org_region   = $v->param('org_region');
+    my $period       = $v->param('period');
+    my $talent       = $v->param('talent');
+    my $comment      = $v->param('comment');
+    my $activity     = $v->param('activity');
+    my $reasons      = $v->every_param('reason');
+    my $paths        = $v->every_param('path');
+    my $job          = $v->param('job');
 
-    my $schema    = $self->schema;
-    my $volunteer = $schema->resultset('Volunteer')->find_or_create(
-        {
-            name       => $name,
-            gender     => $gender,
-            email      => $email_addr,
-            phone      => $phone,
-            address    => $address,
-            birth_date => $birth_date
-        }
-    );
+    my @added;
+    my $tz = $self->config->{timezone};
+    my $volunteer;
+    for my $datetime (@$activity_datetime) {
+        my ( $date, $hours ) = split / /, $datetime;
+        my ( $from, $to )    = split /-/, $hours;
 
-    return $self->error( 500, 'Failed to find or create Volunteer' ) unless $volunteer;
+        my $able_hours = $self->_able_hour($date);
+        return $self->error( 400, "Not allow activity hours: $hours" ) unless $able_hours->{$hours};
 
-    my $parser = $self->schema->storage->datetime_parser;
-    my $rs     = $self->schema->resultset('VolunteerWork')->search(
-        {
-            volunteer_id       => $volunteer->id,
-            activity_from_date => {
-                -between => [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
-            },
-            status => 'reported',
-        }
-    );
+        my $dt = DateTime::Format::ISO8601->parse_datetime($date);
+        $dt->set_time_zone($tz);
 
-    return $self->error( 400, '같은날 두번 이상 신청할 수 없습니다' ) if $rs->count;
+        $volunteer = $self->schema->resultset('Volunteer')->find_or_create(
+            {
+                name       => $name,
+                gender     => $gender,
+                email      => $email_addr,
+                phone      => $phone,
+                address    => $address,
+                birth_date => $birth_date
+            }
+        );
 
-    my $work = $schema->resultset('VolunteerWork')->create(
-        {
-            volunteer_id       => $volunteer->id,
-            activity_from_date => "$activity_date $from:00:00",
-            activity_to_date   => "$activity_date $to:00:00",
-            need_1365          => $need_1365,
-            org_username       => $org_username,
-            org_region         => $org_region,
-            period             => $period,
-            reason             => join( '|', @$reasons ),
-            path               => join( '|', @$paths ),
-            job                => $job,
-            activity           => $activity,
-            talent             => $talent,
-            comment            => $comment,
-            authcode           => String::Random->new->randregex('[a-zA-Z0-9]{32}')
-        }
-    );
+        return $self->error( 500, 'Failed to find or create Volunteer' ) unless $volunteer;
 
-    return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
+        my $parser = $self->schema->storage->datetime_parser;
+        my $rs     = $self->schema->resultset('VolunteerWork')->search(
+            {
+                volunteer_id       => $volunteer->id,
+                activity_from_date => {
+                    -between =>
+                        [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
+                },
+                status => 'reported',
+            }
+        );
 
-    ## SMS
-    my $sender = $self->app->sms_sender;
-    my $msg = $self->render_to_string( 'sms/status-reported', format => 'txt', work => $work );
-    chomp $msg;
-    my $sent = $sender->send_sms( text => $msg, to => $phone );
-    $self->log->error("Failed to send SMS: $msg, $phone") unless $sent;
+        return $self->error( 400, '같은날 두번 이상 신청할 수 없습니다' ) if $rs->count;
+
+        my $work = $self->schema->resultset('VolunteerWork')->create(
+            {
+                volunteer_id       => $volunteer->id,
+                activity_from_date => "$date $from:00:00",
+                activity_to_date   => "$date $to:00:00",
+                need_1365          => $need_1365,
+                org_username       => $org_username,
+                org_region         => $org_region,
+                period             => $period,
+                reason             => join( '|', @$reasons ),
+                path               => join( '|', @$paths ),
+                job                => $job,
+                activity           => $activity,
+                talent             => $talent,
+                comment            => $comment,
+                authcode           => String::Random->new->randregex('[a-zA-Z0-9]{32}')
+            }
+        );
+
+        return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
+        push @added, $dt->day;
+    }
+
+    my $msg = $self->render_to_string( 'sms/status-reported', format => 'txt', name => $name, dates => \@added );
+    $phone =~ s/-//g;
+    $self->sms( $phone, $msg );
 
     my $email = Email::Simple->create(
         header => [
@@ -137,7 +142,7 @@ sub create {
     );
 
     $self->send_mail( encode_utf8( $email->as_string ) );
-    $self->render( 'work/done', work => $work );
+    $self->render( 'work/done', volunteer => $volunteer, dates => \@added );
 }
 
 =head2 find_work
@@ -501,8 +506,7 @@ sub _validate_volunteer {
 sub _validate_volunteer_work {
     my ( $self, $v ) = @_;
 
-    $v->required('activity-date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
-    $v->required('activity-hours')->like(qr/^\d{2}-\d{2}$/);
+    $v->required('activity-datetime')->like(qr/^\d{4}-\d{2}-\d{2} \d{2}-\d{2}$/);
     $v->optional('need_1365');
     $v->optional('org_username');
     $v->optional('org_region');

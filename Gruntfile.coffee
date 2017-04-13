@@ -26,6 +26,12 @@ module.exports = (grunt) ->
         src: ['**/*.js', '!**/*.min.js']
         dest: 'public/assets/dist/js'
         ext: '.min.js'
+      jst:
+        expand: true
+        cwd: 'public/assets/dist/js'
+        src: ['templates.js']
+        dest: 'public/assets/dist/js'
+        ext: '.min.js'
 
     csscomb:
       options:
@@ -60,6 +66,15 @@ module.exports = (grunt) ->
         dest: 'public/assets/dist/css'
         ext: '.css'
 
+    handlebars:
+      options:
+        namespace: 'JST'
+        processName: (path) ->
+          path.replace(/^public\/assets\/jst\//, '').replace(/\.hbs$/, '').replace(/\.html$/, '').replace(/\.jst$/, '')
+      compile:
+        files:
+          'public/assets/dist/js/templates.js': ['public/assets/jst/**/*.hbs', 'public/assets/jst/**/*.html', 'public/assets/jst/**/*.jst']
+
     watch:
       coffee:
         files: 'public/assets/coffee/*.coffee'
@@ -67,14 +82,17 @@ module.exports = (grunt) ->
       less:
         files: 'public/assets/less/*.less'
         tasks: ['dist-css']
+      jst:
+        files: ['public/assets/jst/**/*.hbs', 'public/assets/jst/**/*.html', 'public/assets/jst/**/*.jst']
+        tasks: ['dist-template']
 
   require('load-grunt-tasks')(grunt, { scope: 'devDependencies' })
   require('time-grunt')(grunt)
 
-  # Docs task
   grunt.registerTask('dist-js', ['coffee:dist', 'uglify:dist'])
   grunt.registerTask('dist-css', ['less:dist', 'csscomb:dist', 'cssmin:dist'])
-  grunt.registerTask('dist', ['clean', 'dist-js', 'dist-css'])
+  grunt.registerTask('dist-template', ['handlebars:compile', 'uglify:jst'])
+  grunt.registerTask('dist', ['clean', 'dist-template', 'dist-js', 'dist-css'])
 
   # Default task
   grunt.registerTask('default', ['dist'])
