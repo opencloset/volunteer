@@ -28,6 +28,8 @@
     <script src="/assets/components/jquery/dist/jquery.min.js"></script>
     <script src="/assets/components/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="/assets/components/underscore/underscore.js"></script>
+    <script src="/assets/components/handlebars/handlebars.runtime.min.js"></script>
+    <script src="/assets/dist/js/templates.min.js"></script>
     % for my $js (@$jses) {
       <script src="<%= $js %>"></script>
     % }

@@ -1,6 +1,3 @@
-$.facebox.settings.closeImage   = '/assets/components/facebox/src/closelabel.png'
-$.facebox.settings.loadingImage = '/assets/components/facebox/src/loading.gif'
-
 $ ->
   holidays = eval $("input[name=activity-date]").data('holidays')
   $('input[name=birth_date]').mask('0000-00-00')
@@ -26,6 +23,17 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
 
+  $('select[name=activity-hours]').on 'change', (e) ->
+    date = $("input[name=activity-date]").val()
+    hour = $(@).find(':selected').val()
+    label = $(@).find(':selected').text()
+    template = JST['work/activity-datetime-list-item']
+    html     = template({ date: date, hour: hour, label: label })
+    $('#activity-datetime').append(html)
+
+  $('#activity-datetime').on 'click', '.btn-delete', (e) ->
+    $(@).closest('li').remove()
+
   $('.agree').click ->
     $(@).prev().prop('checked', true)
 
@@ -40,5 +48,3 @@ $ ->
     errors:
       highteen: '17세(고등학생)이상 봉사신청이 가능합니다'
   })
-
-  $('a[rel*=facebox]').facebox()
