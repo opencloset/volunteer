@@ -77,6 +77,8 @@
             </div>
             <div class="help-block with-errors"></div>
           </div>
+
+          <ul id="activity-datetime"></ul>
         </div>
       </div>
 

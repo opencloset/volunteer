@@ -23,6 +23,17 @@ $ ->
       error: (jqXHR, textStatus, errorThrown) ->
       complete: (jqXHR, textStatus) ->
 
+  $('select[name=activity-hours]').on 'change', (e) ->
+    date = $("input[name=activity-date]").val()
+    hour = $(@).find(':selected').val()
+    label = $(@).find(':selected').text()
+    template = JST['work/activity-datetime-list-item']
+    html     = template({ date: date, hour: hour, label: label })
+    $('#activity-datetime').append(html)
+
+  $('#activity-datetime').on 'click', '.btn-delete', (e) ->
+    $(@).closest('li').remove()
+
   $('.agree').click ->
     $(@).prev().prop('checked', true)
 
