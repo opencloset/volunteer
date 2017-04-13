@@ -1,17 +1,13 @@
 % title '자원봉사 신청완료';
 % layout 'default';
 
-% my $volunteer = $work->volunteer;
-% my $from = $work->activity_from_date;
-% my $to   = $work->activity_to_date;
-
 <div class="row">
   <div class="col-xs-12 col-sm-8 col-md-6 col-sm-offset-2 col-md-offset-3">
     <h2>자원봉사 신청완료 <small>열린옷장</small></h2>
     <hr class="colorgraph">
     <h3><%= $volunteer->name %><small>님 열린옷장 자원봉사에 신청해주셔서 감사합니다.</small></h3>
     <p>
-      안녕하세요. <%= $volunteer->name %>님이 <%= $from->month %>월 <%= $from->day %>일 <%= $from->hour %> ~ <%= $to->hour %>시에 신청하신 자원봉사신청이 정상적으로 접수되었습니다.
+      안녕하세요. <%= $volunteer->name %>님이 <%= join('일, ', @$dates) %>일에 신청하신 자원봉사신청이 정상적으로 접수되었습니다.
     </p>
     <p>
       현재 열린옷장 담당자가 접수된 봉사신청 내역을 확인하고 있습니다. (최종승인까지 소요기간 1일 이내)
