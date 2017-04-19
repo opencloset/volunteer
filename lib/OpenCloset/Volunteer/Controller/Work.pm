@@ -21,10 +21,10 @@ has schema => sub { shift->app->schema };
 sub add {
     my $self = shift;
 
-    my $now  = DateTime->now;
+    my $now = DateTime->now( time_zone => $self->config->{timezone} );
     my $year = $now->year;
 
-    $self->render( holidays => [$self->holidays( $year, $year + 1 )] );
+    $self->render( now => $now, holidays => [$self->holidays( $year, $year + 1 )] );
 }
 
 =head2 create
