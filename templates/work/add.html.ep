@@ -54,6 +54,7 @@
                    name="activity-date"
                    class="form-control input-lg"
                    placeholder="봉사활동 날짜 Date"
+                   data-date-start-date="+<%= $now->hour < 18 ? '1' : '2' %>d"
                    data-date-format="yyyy-mm-dd"
                    data-date-end-date="+1m"
                    tabindex="6"

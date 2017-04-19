@@ -5,7 +5,6 @@ $ ->
   $("input[name=activity-date]").datepicker(
     todayHighlight: true
     autoclose:      true
-    startDate: '+1d'
     datesDisabled: holidays
     language: 'kr'
   ).on 'changeDate', (e) ->
