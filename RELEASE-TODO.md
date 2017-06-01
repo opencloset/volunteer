@@ -1,3 +1,5 @@
+v0.3.2
+
     # volunteer.conf
     secrets       => [$ENV{OPENCLOSET_SECRET}],
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',

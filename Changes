@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## [v0.3.2] - Thu, 01 Jun 2017 16:35:29 +0900
 ### Changed
 - staff 계정은 기간제한 없이 봉사활동을 신청할 수 있도록 함
 
