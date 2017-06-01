@@ -24,7 +24,15 @@ sub add {
     my $now = DateTime->now( time_zone => $self->config->{timezone} );
     my $year = $now->year;
 
-    $self->render( now => $now, holidays => [$self->holidays( $year, $year + 1 )] );
+    my $user_id = $self->session('access_token');
+    my $staff;
+    if ($user_id) {
+        my $user = $self->schema->resultset('User')->find( { id => $user_id } );
+        my $user_info = $user->user_info;
+        $staff = $user_info->staff;
+    }
+
+    $self->render( now => $now, holidays => [$self->holidays( $year, $year + 1 )], staff => $staff );
 }
 
 =head2 create

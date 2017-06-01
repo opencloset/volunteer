@@ -1,3 +1,12 @@
+# Change Log
+The format is based on [Keep a Changelog](http://keepachangelog.com/)
+
+## [Unreleased]
+
+## [v0.3.2] - Thu, 01 Jun 2017 16:35:29 +0900
+### Changed
+- staff 계정은 기간제한 없이 봉사활동을 신청할 수 있도록 함
+
 v0.3.1    Wed, 19 Apr 2017 17:55:52 +0900
   - 신청서에 복수신청에 관한 안내 추가 (#51)
   - 18:00 이후에는 익일 신청을 할 수 없도록 함 (#88)
