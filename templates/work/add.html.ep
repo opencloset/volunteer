@@ -56,7 +56,9 @@
                    placeholder="봉사활동 날짜 Date"
                    data-date-start-date="+<%= $now->hour < 18 ? '1' : '2' %>d"
                    data-date-format="yyyy-mm-dd"
+                   % unless ($staff) {
                    data-date-end-date="+1m"
+                   % }
                    tabindex="6"
                    data-holidays="['<%= join('\',\'', @$holidays) %>']"
                    required>

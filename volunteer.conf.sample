@@ -30,6 +30,11 @@ my $volunteer_address = 'volunteer@theopencloset.net';
             _from          => $SMS_FROM,
         },
     },
+
+    ## must set secret of staff.theopencloset.net
+    secrets       => [$ENV{OPENCLOSET_SECRET}],
+    cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
+
     google_private_key          => 'google-private-key.json',
     google_calendar_id          => $volunteer_address,
     email_notify_from           => $volunteer_address,
