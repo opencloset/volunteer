@@ -1,5 +1,6 @@
 requires 'Config::INI::Reader';
 requires 'Crypt::OpenSSL::RSA';
+requires 'Data::Pageset';
 requires 'Date::Holidays::KR';
 requires 'DateTime::Format::ISO8601';
 requires 'Email::Sender::Simple';

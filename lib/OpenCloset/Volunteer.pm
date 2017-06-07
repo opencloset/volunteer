@@ -69,14 +69,18 @@ sub _public_routes {
     $work->get('/cancel')->to('work#cancel')->name('work.cancel');
     $work->get('/edit')->to('work#edit')->name('work.edit');
     $work->post('/')->to('work#update')->name('work.update');
-    $work->options('/status')->to('work#preflight_cors');
-    $work->options('/1365')->to('work#preflight_cors');
     $work->put('/status')->to('work#update_status');
     $work->put('/1365')->to('work#update_1365');
     $work->get('/guestbook')->to('work#add_guestbook')->name('work.guestbook');
     $work->post('/guestbook')->to('work#create_guestbook');
 }
 
-sub _private_routes { }
+sub _private_routes {
+    my $self = shift;
+    my $root = $self->routes;
+
+    my $r = $root->under('/')->to('user#auth');
+    $r->get('/works')->to('work#list');
+}
 
 1;

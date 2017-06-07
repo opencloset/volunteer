@@ -1,6 +1,7 @@
 package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
+use Data::Pageset;
 use DateTime::Format::ISO8601;
 use DateTime;
 use Email::Simple;
@@ -309,33 +310,6 @@ sub update {
     $self->render( 'work/done', work => $work );
 }
 
-=head2 preflight_cors
-
-    OPTIONS /works/:id/status
-
-=over
-
-=item https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
-
-=item http://www.html5rocks.com/en/tutorials/cors/
-
-=back
-
-=cut
-
-sub preflight_cors {
-    my $self = shift;
-
-    my $origin = $self->req->headers->header('origin');
-    my $method = $self->req->headers->header('access-control-request-method');
-
-    return $self->error( 400, "Not Allowed Origin: $origin" ) unless $origin =~ m/theopencloset\.net/;
-
-    $self->res->headers->header( 'Access-Control-Allow-Origin'  => $origin );
-    $self->res->headers->header( 'Access-Control-Allow-Methods' => $method );
-    $self->respond_to( any => { data => '', status => 200 } );
-}
-
 =head2 update_status
 
     PUT /works/:id/status?status=reported|approved|done|canceled
@@ -346,9 +320,6 @@ sub update_status {
     my $self      = shift;
     my $work      = $self->stash('work');
     my $volunteer = $work->volunteer;
-
-    my $origin = $self->req->headers->header('origin');
-    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin || '' );
 
     my $validation = $self->validation;
     $validation->required('status')->in(qw/reported approved done canceled drop/);
@@ -414,9 +385,6 @@ sub update_1365 {
     my $self  = shift;
     my $work  = $self->stash('work');
     my $_1365 = $self->param('1365') || 0;
-
-    my $origin = $self->req->headers->header('origin');
-    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
 
     $work->update( { done_1365 => $_1365 } );
     $self->render( json => { $work->get_columns } );
@@ -570,6 +538,71 @@ sub _able_hour {
     }
 
     return {%result};
+}
+
+=head2 list
+
+    GET /works
+
+=cut
+
+sub list {
+    my $self   = shift;
+    my $status = $self->param('status') || 'reported';
+    my $query  = $self->param('q') // '';
+
+    $self->stash( pageset => '' );    # prevent undefined error in template
+
+    my $tz = $self->config->{timezone} || 'Asia/Seoul';
+    my ( $works, $standby );
+    my $parser = $self->schema->storage->datetime_parser;
+    $works = $self->schema->resultset('VolunteerWork')
+        ->search( { status => $status }, { order_by => 'activity_from_date' } );
+
+    if ( $status eq 'done' ) {
+        $works = $works->search(
+            {
+                activity_from_date =>
+                    { '>' => $parser->format_datetime( DateTime->now( time_zone => $tz )->subtract( days => 7 ) ) },
+                need_1365 => 1,
+                done_1365 => { '<>' => 0 },
+            },
+            { order_by => [{ -desc => 'need_1365' }, { -asc => 'done_1365' }, { -desc => 'activity_from_date' }] }
+        );
+        $standby
+            = $self->schema->resultset('VolunteerWork')->search( { status => $status, need_1365 => 1, done_1365 => 0, },
+            { order_by => [{ -desc => 'need_1365' }, { -asc => 'done_1365' }, { -desc => 'activity_from_date' }] } );
+    }
+    elsif ( $status eq 'canceled' or $status eq 'drop' ) {
+        my $p = $self->param('p') || 1;
+        $works = $works->search( undef, { page => $p, rows => 10, order_by => { -desc => 'id' } } );
+
+        my $pageset = Data::Pageset->new(
+            {
+                total_entries    => $works->pager->total_entries,
+                entries_per_page => $works->pager->entries_per_page,
+                pages_per_set    => 5,
+                current_page     => $p,
+            }
+        );
+
+        $self->stash( pageset => $pageset );
+    }
+
+    if ($query) {
+        $works = $self->schema->resultset('VolunteerWork')->search(
+            {
+                -or => {
+                    'volunteer.name'  => $query,
+                    'volunteer.phone' => $self->phone_format($query),
+                    'volunteer.email' => $query
+                }
+            },
+            { join => 'volunteer' }
+        );
+    }
+
+    $self->render( works => $works, standby => $standby );
 }
 
 1;

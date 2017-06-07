@@ -2,6 +2,16 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- staff 의 봉사활동 목록을 /works 로 이관
+- Add helper `phone_format`
+- private_routes 추가
+  - GET /works
+
+### Removed
+- Access_control_CORS 삭제
+  - OPTIONS /status route 삭제
+  - OPTIONS /1365 route 삭제
 
 ## [v0.3.2] - Thu, 01 Jun 2017 16:35:29 +0900
 ### Changed
