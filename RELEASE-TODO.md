@@ -1,3 +1,7 @@
+    $ cd /path/to/OpenCloset-Schema/
+    $ mysql < db/alter/129-volunteer-comment.sql
+    $ closetpan OpenCloset::Schema    # v0.053
+
 v0.3.3
 
     $ cpanm Data::Pageset
