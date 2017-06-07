@@ -6,6 +6,7 @@ requires 'DateTime::Format::ISO8601';
 requires 'Email::Sender::Simple';
 requires 'Email::Sender::Transport::SMTP';
 requires 'Email::Simple';
+requires 'Email::Valid';
 requires 'HTML::FillInForm::Lite';
 requires 'HTTP::Tiny';
 requires 'JSON';
