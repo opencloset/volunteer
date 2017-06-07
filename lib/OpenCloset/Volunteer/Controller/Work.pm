@@ -329,17 +329,16 @@ sub update_status {
     my $status      = $validation->param('status');
     $work->update( { status => $status } );
 
-    my $sender = $self->app->sms_sender;
     if ( $status eq 'approved' ) {
         my $phone = $volunteer->phone;
         my $msg = $self->render_to_string( 'sms/status-approved', format => 'txt', work => $work );
         chomp $msg;
-        my $sent = $sender->send_sms( text => $msg, to => $phone );
+        my $sent = $self->sms( $phone, $msg );
         $self->log->error("Failed to send SMS: $msg") unless $sent;
 
         $msg = $self->render_to_string( 'sms/opencloset-location', format => 'txt' );
         chomp $msg;
-        $sent = $sender->send_sms( text => $msg, to => $phone );
+        $sent = $self->sms( $phone, $msg );
         $self->log->error("Failed to send SMS: $phone, $msg") unless $sent;
 
         ## Google Calendar
