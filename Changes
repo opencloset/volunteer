@@ -3,6 +3,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 ### Added
+- staff 의 봉사활동 목록을 /works 로 이관
 - Add helper `phone_format`
 - private_routes 추가
   - GET /works

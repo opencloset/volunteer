@@ -1,6 +1,7 @@
 package OpenCloset::Volunteer::Controller::Work;
 use Mojo::Base 'Mojolicious::Controller';
 
+use Data::Pageset;
 use DateTime::Format::ISO8601;
 use DateTime;
 use Email::Simple;
@@ -537,6 +538,71 @@ sub _able_hour {
     }
 
     return {%result};
+}
+
+=head2 list
+
+    GET /works
+
+=cut
+
+sub list {
+    my $self   = shift;
+    my $status = $self->param('status') || 'reported';
+    my $query  = $self->param('q') // '';
+
+    $self->stash( pageset => '' );    # prevent undefined error in template
+
+    my $tz = $self->config->{timezone} || 'Asia/Seoul';
+    my ( $works, $standby );
+    my $parser = $self->schema->storage->datetime_parser;
+    $works = $self->schema->resultset('VolunteerWork')
+        ->search( { status => $status }, { order_by => 'activity_from_date' } );
+
+    if ( $status eq 'done' ) {
+        $works = $works->search(
+            {
+                activity_from_date =>
+                    { '>' => $parser->format_datetime( DateTime->now( time_zone => $tz )->subtract( days => 7 ) ) },
+                need_1365 => 1,
+                done_1365 => { '<>' => 0 },
+            },
+            { order_by => [{ -desc => 'need_1365' }, { -asc => 'done_1365' }, { -desc => 'activity_from_date' }] }
+        );
+        $standby
+            = $self->schema->resultset('VolunteerWork')->search( { status => $status, need_1365 => 1, done_1365 => 0, },
+            { order_by => [{ -desc => 'need_1365' }, { -asc => 'done_1365' }, { -desc => 'activity_from_date' }] } );
+    }
+    elsif ( $status eq 'canceled' or $status eq 'drop' ) {
+        my $p = $self->param('p') || 1;
+        $works = $works->search( undef, { page => $p, rows => 10, order_by => { -desc => 'id' } } );
+
+        my $pageset = Data::Pageset->new(
+            {
+                total_entries    => $works->pager->total_entries,
+                entries_per_page => $works->pager->entries_per_page,
+                pages_per_set    => 5,
+                current_page     => $p,
+            }
+        );
+
+        $self->stash( pageset => $pageset );
+    }
+
+    if ($query) {
+        $works = $self->schema->resultset('VolunteerWork')->search(
+            {
+                -or => {
+                    'volunteer.name'  => $query,
+                    'volunteer.phone' => $self->phone_format($query),
+                    'volunteer.email' => $query
+                }
+            },
+            { join => 'volunteer' }
+        );
+    }
+
+    $self->render( works => $works, standby => $standby );
 }
 
 1;
