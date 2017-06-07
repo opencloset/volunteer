@@ -2,6 +2,11 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- 자원봉사자에 대한 코멘트를 입력할 수 있는 기능 추가
+
+### Changed
+- sms 를 직접 보내는 대신 `sms` helper 를 활용
 
 ## [v0.3.3] - Thu, 08 Jun 2017 02:16:43 +0900
 ### Added

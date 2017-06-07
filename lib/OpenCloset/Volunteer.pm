@@ -1,9 +1,7 @@
 package OpenCloset::Volunteer;
 use Mojo::Base 'Mojolicious';
 
-use SMS::Send::KR::APIStore;
-use SMS::Send::KR::CoolSMS;
-use SMS::Send;
+use Email::Valid ();
 
 use OpenCloset::Schema;
 
@@ -14,12 +12,6 @@ has schema => sub {
     my $conf = $self->config->{database};
     OpenCloset::Schema->connect(
         { dsn => $conf->{dsn}, user => $conf->{user}, password => $conf->{pass}, %{ $conf->{opts} }, } );
-};
-
-has sms_sender => sub {
-    my $self   = shift;
-    my $config = $self->config;
-    SMS::Send->new( $config->{sms}{driver}, %{ $config->{sms}{ $config->{sms}{driver} } } );
 };
 
 =head1 METHODS
@@ -45,6 +37,7 @@ sub startup {
     $self->_assets;
     $self->_public_routes;
     $self->_private_routes;
+    $self->_extend_validator;
 }
 
 sub _assets {
@@ -81,6 +74,19 @@ sub _private_routes {
 
     my $r = $root->under('/')->to('user#auth');
     $r->get('/works')->to('work#list');
+    $r->get('/summary')->to('volunteer#summary');
+    $r->post('/volunteer/:id')->to('volunteer#update');
+}
+
+sub _extend_validator {
+    my $self = shift;
+
+    $self->validator->add_check(
+        email => sub {
+            my ( $v, $name, $value ) = @_;
+            return not Email::Valid->address($value);
+        }
+    );
 }
 
 1;
