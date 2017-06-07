@@ -309,33 +309,6 @@ sub update {
     $self->render( 'work/done', work => $work );
 }
 
-=head2 preflight_cors
-
-    OPTIONS /works/:id/status
-
-=over
-
-=item https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS
-
-=item http://www.html5rocks.com/en/tutorials/cors/
-
-=back
-
-=cut
-
-sub preflight_cors {
-    my $self = shift;
-
-    my $origin = $self->req->headers->header('origin');
-    my $method = $self->req->headers->header('access-control-request-method');
-
-    return $self->error( 400, "Not Allowed Origin: $origin" ) unless $origin =~ m/theopencloset\.net/;
-
-    $self->res->headers->header( 'Access-Control-Allow-Origin'  => $origin );
-    $self->res->headers->header( 'Access-Control-Allow-Methods' => $method );
-    $self->respond_to( any => { data => '', status => 200 } );
-}
-
 =head2 update_status
 
     PUT /works/:id/status?status=reported|approved|done|canceled
@@ -346,9 +319,6 @@ sub update_status {
     my $self      = shift;
     my $work      = $self->stash('work');
     my $volunteer = $work->volunteer;
-
-    my $origin = $self->req->headers->header('origin');
-    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin || '' );
 
     my $validation = $self->validation;
     $validation->required('status')->in(qw/reported approved done canceled drop/);
@@ -414,9 +384,6 @@ sub update_1365 {
     my $self  = shift;
     my $work  = $self->stash('work');
     my $_1365 = $self->param('1365') || 0;
-
-    my $origin = $self->req->headers->header('origin');
-    $self->res->headers->header( 'Access-Control-Allow-Origin' => $origin );
 
     $work->update( { done_1365 => $_1365 } );
     $self->render( json => { $work->get_columns } );
