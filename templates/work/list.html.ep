@@ -12,7 +12,10 @@
   % my $age = $birthdate ? DateTime->now->year - $birthdate->year + 1 : '나이모름';
   % my $status = $work->get_column('status');
   <span class="list-group-item status-<%= $status %>" data-work-id="<%= $work->id %>">
-    <h4 class="list-group-item-heading"><%= $volunteer->name %>
+    <h4 class="list-group-item-heading">
+      <a href="<%= url_for('/summary')->query(email => $volunteer->email) %>">
+        <%= $volunteer->name %>
+      </a>
       <small><%= $age %></small>
       <span class="label label-<%= $status %>"><%= $status_map{$status} %></span>
       % if ($status eq 'done' && $work->need_1365) {
