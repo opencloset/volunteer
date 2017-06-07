@@ -75,6 +75,12 @@ sub _public_routes {
     $work->post('/guestbook')->to('work#create_guestbook');
 }
 
-sub _private_routes { }
+sub _private_routes {
+    my $self = shift;
+    my $root = $self->routes;
+
+    my $r = $root->under('/')->to('user#auth');
+    $r->get('/works')->to('work#list');
+}
 
 1;
