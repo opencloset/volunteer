@@ -82,7 +82,8 @@
           </dd>
 
           <dd>
-            % my @activities = split /\|/, $work->activity;
+            % my $activity = $work->activity || '';
+            % my @activities = split /\|/, $activity;
             <ul class="list-group">
               <li class="list-group-item text-center text-info">관심있는 활동</li>
               % for my $activity (@activities) {
