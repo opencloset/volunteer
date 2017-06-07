@@ -1,3 +1,8 @@
+v0.3.3
+
+    $ cpanm Data::Pageset
+    $ grunt
+
 v0.3.2
 
     # volunteer.conf
