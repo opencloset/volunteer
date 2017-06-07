@@ -36,6 +36,7 @@ sub register {
     $app->helper( quickAdd     => \&quickAdd );
     $app->helper( delete_event => \&delete_event );
     $app->helper( send_mail    => \&send_mail );
+    $app->helper( phone_format => \&phone_format );
 }
 
 =head2 error( $status, $error )
@@ -241,6 +242,22 @@ sub send_mail {
 
     my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
     sendmail( $email, { transport => $transport } );
+}
+
+=head2 phone_format( $phone )
+
+    %= phone_format('01012345678');
+    # 010-1234-5678
+
+=cut
+
+sub phone_format {
+    my ( $self, $phone ) = @_;
+    return $phone if $phone !~ m/^[0-9]{10,11}$/;
+
+    $phone =~ s/(\d{3})(\d{4})/$1-$2/;
+    $phone =~ s/(\d{4})(\d{3,4})/$1-$2/;
+    return $phone;
 }
 
 1;

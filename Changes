@@ -3,6 +3,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 ### Added
+- Add helper `phone_format`
 - private_routes 추가
   - GET /works
 
