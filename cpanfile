@@ -8,6 +8,7 @@ requires 'Email::Sender::Transport::SMTP';
 requires 'Email::Simple';
 requires 'Email::Valid';
 requires 'HTML::FillInForm::Lite';
+requires 'HTTP::Body::Builder::MultiPart';
 requires 'HTTP::Tiny';
 requires 'JSON';
 requires 'JSON::WebToken';
