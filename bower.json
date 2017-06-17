@@ -25,6 +25,7 @@
     "jQuery-Mask-Plugin": "~1.13.3",
     "bootstrap-validator": "~0.9.0",
     "opencloset.css": "https://github.com/opencloset/opencloset.css.git#^1.0.3",
-    "handlebars": "^4.0.5"
+    "handlebars": "^4.0.5",
+    "dropzone": "^5.0.1"
   }
 }

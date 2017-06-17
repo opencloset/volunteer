@@ -2,6 +2,8 @@ package OpenCloset::Volunteer;
 use Mojo::Base 'Mojolicious';
 
 use Email::Valid ();
+use HTTP::Body::Builder::MultiPart;
+use HTTP::Tiny;
 
 use OpenCloset::Schema;
 
@@ -26,6 +28,7 @@ sub startup {
     my $self = shift;
 
     $self->plugin('Config');
+    $self->plugin( Minion => { SQLite => $self->config->{minion}{SQLite} } );
     $self->plugin('OpenCloset::Plugin::Helpers');
     $self->plugin('OpenCloset::Volunteer::Plugin::Helpers');
 
@@ -38,6 +41,7 @@ sub startup {
     $self->_public_routes;
     $self->_private_routes;
     $self->_extend_validator;
+    $self->_add_task;
 }
 
 sub _assets {
@@ -75,6 +79,7 @@ sub _private_routes {
     my $r = $root->under('/')->to('user#auth');
     $r->get('/works')->to('work#list');
     $r->get('/summary')->to('volunteer#summary');
+    $r->post('/photos')->to('photo#create');
     $r->post('/volunteer/:id')->to('volunteer#update');
 }
 
@@ -85,6 +90,46 @@ sub _extend_validator {
         email => sub {
             my ( $v, $name, $value ) = @_;
             return not Email::Valid->address($value);
+        }
+    );
+}
+
+sub _add_task {
+    my $self   = shift;
+    my $minion = $self->minion;
+    $minion->reset;
+
+    $minion->add_task(
+        upload_photo => sub {
+            my ( $job, $key, $img ) = @_;
+            return unless $key;
+            return unless $img;
+
+            my $app     = $job->app;
+            my $oavatar = $app->config->{oavatar};
+            my ( $token, $url ) = ( $oavatar->{token}, $oavatar->{url} );
+            my $multipart = HTTP::Body::Builder::MultiPart->new;
+            $multipart->add_content( token => $token );
+            $multipart->add_content( key   => $key );
+            $multipart->add_file( img => $img );
+
+            my $http = HTTP::Tiny->new;
+            my $res  = $http->request(
+                'POST', $url,
+                {
+                    headers => { 'content-type' => 'multipart/form-data; boundary=' . $multipart->{boundary} },
+                    content => $multipart->as_string
+                }
+            );
+
+            unless ( $res->{success} ) {
+                $app->log->error("Failed to upload a oavatar: $res->{reason}");
+            }
+            else {
+                $app->log->info("Photo uploaded: $res->{headers}{location}");
+            }
+
+            $img->remove;
         }
     );
 }

@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- 자원봉사자의 사진을 업로드 할 수 있도록 함 (#15)
+
 ## [v0.3.4] - Thu, 08 Jun 2017 04:05:38 +0900
 ### Added
 - 자원봉사자에 대한 코멘트를 입력할 수 있는 기능 추가

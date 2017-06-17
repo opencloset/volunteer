@@ -5,3 +5,4 @@ public/assets/dist/
 google-private-key.json
 _gh_pages/
 node_modules/
+minion.*

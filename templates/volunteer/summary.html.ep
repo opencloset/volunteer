@@ -1,5 +1,10 @@
 % title '자원봉사자 요약';
-% layout 'default', jses => ['/assets/dist/js/volunteer-summary.min.js'];
+% layout 'default', csses => [
+%   '/assets/components/dropzone/dist/min/dropzone.min.css'
+% ], jses => [
+%   '/assets/components/dropzone/dist/min/dropzone.min.js',
+%   '/assets/dist/js/volunteer-summary.min.js'
+% ];
 % my %STATUS_MAP = (reported => '신청', approved => '승인', done => '방문', canceled => '취소', drop => '방문안함');
 
 <h2>
@@ -14,6 +19,11 @@
     % }
   </small>
 </h2>
+
+<div>
+  % my $email = param('email');
+  %= include 'partials/dropzone', name => 'photo', action => url_for('/photos'), id => 'dropzone', thumbnail => oavatar_url($email, size => 120)
+</div>
 
 <div class="list-group">
   % for my $status (keys %$group) {

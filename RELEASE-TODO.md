@@ -1,3 +1,8 @@
+    $ cpanm HTTP::Body::Builder::MultiPart
+    $ bower install
+    $ grunt
+    $ MOJO_CONFIG=volunteer.conf script/volunteer minion worker    # minion worker 를 띄워야 한다
+
 v0.3.4
 
     $ cd /path/to/OpenCloset-Schema/
