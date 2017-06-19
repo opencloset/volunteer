@@ -22,7 +22,7 @@
 
 <div>
   % my $email = param('email');
-  %= include 'partials/dropzone', name => 'photo', action => url_for('/photos'), id => 'dropzone', thumbnail => oavatar_url($email, size => 120)
+  %= include 'partials/dropzone', name => 'photo', action => url_for('/photos'), id => 'dropzone', thumbnail => oavatar_url($email, size => 300)
 </div>
 
 <div class="list-group">
