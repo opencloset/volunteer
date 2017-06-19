@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.3.6] - Mon, 19 Jun 2017 13:52:54 +0900
+### Changed
+- 자원봉사자의 사진 미리보기를 더 크게 함 (#15)
+
 ## [v0.3.5] - Sat, 17 Jun 2017 15:56:26 +0900
 ### Added
 - 자원봉사자의 사진을 업로드 할 수 있도록 함 (#15)
