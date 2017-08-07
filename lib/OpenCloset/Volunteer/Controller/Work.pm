@@ -330,7 +330,7 @@ sub update_status {
     $work->update( { status => $status } );
 
     if ( $status eq 'approved' ) {
-        my $phone = $volunteer->phone;
+        my $phone = $volunteer->phone =~ s/\-//gr;
         my $msg = $self->render_to_string( 'sms/status-approved', format => 'txt', work => $work );
         chomp $msg;
         my $sent = $self->sms( $phone, $msg );

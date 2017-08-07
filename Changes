@@ -3,6 +3,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.3.7] - Mon, 07 Aug 2017 13:30:28 +0900
+
+### Changed
+- 첫화면에서 열린사진관 관련된 내용을 삭제 (#97)
+
+### Fixed
+- 승인/위치안내 문자의 수신번호 포맷문제로 인한 오류 수정 (#101)
+
 ## [v0.3.6] - Mon, 19 Jun 2017 13:52:54 +0900
 ### Changed
 - 자원봉사자의 사진 미리보기를 더 크게 함 (#15)
