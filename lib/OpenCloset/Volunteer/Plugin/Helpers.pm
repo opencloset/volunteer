@@ -90,7 +90,7 @@ sub auth_google {
     return unless $private_key;
 
     my $json_private = path($private_key);
-    return unless $json_private;
+    return unless $json_private->exists;
 
     my $private = try {
         decode_json( $json_private->slurp );

@@ -2,6 +2,8 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Fixed
+- 승인/위치안내 문자의 수신번호 포맷문제로 인한 오류 수정 (#101)
 
 ## [v0.3.6] - Mon, 19 Jun 2017 13:52:54 +0900
 ### Changed
