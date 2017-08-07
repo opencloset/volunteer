@@ -3,6 +3,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.3.7] - Mon, 07 Aug 2017 13:30:28 +0900
+
 ### Changed
 - 첫화면에서 열린사진관 관련된 내용을 삭제 (#97)
 
