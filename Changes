@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- 봉사활동 시간변경 (#100)
+  - 10시 ~ 13시 3시간 -> 10시 ~ 12시 30분
+  - 10시 ~ 18시 7시간 -> 10시 ~ 18시 6시간 30분
+
 ## [v0.3.7] - Mon, 07 Aug 2017 13:30:28 +0900
 
 ### Changed
