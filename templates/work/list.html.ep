@@ -53,11 +53,9 @@
       % }
     </h4>
     <p class="list-group-item-text">
-      <mark><%= sprintf "%02d", $from->month %>-<%= sprintf "%02d", $from->day %></mark>
+      <mark><%= $from->strftime('%m-%d') %></mark>
       <span>
-        <time><%= sprintf "%02d", $from->hour %>:00</time>
-        ~
-        <time><%= sprintf "%02d", $to->hour %>:00</time>
+        <time><%= $from->strftime('%H:%M') %> ~ <%= $to->strftime('%H:%M') %></time>
       </span>
       <dl>
         <dt>신청일</dt>

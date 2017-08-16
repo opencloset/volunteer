@@ -115,8 +115,8 @@ sub create {
         my $work = $self->schema->resultset('VolunteerWork')->create(
             {
                 volunteer_id       => $volunteer->id,
-                activity_from_date => "$date $from:00:00",
-                activity_to_date   => "$date $to:00:00",
+                activity_from_date => "$date $from:00",
+                activity_to_date   => "$date $to:00",
                 need_1365          => $need_1365,
                 org_username       => $org_username,
                 org_region         => $org_region,
@@ -132,7 +132,7 @@ sub create {
         );
 
         return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
-        push @added, $dt->day;
+        push @added, sprintf( '%d월 %d일', $dt->month, $dt->day );
     }
 
     my $msg = $self->render_to_string( 'sms/status-reported', format => 'txt', name => $name, dates => \@added );
@@ -282,8 +282,8 @@ sub update {
 
     $work->update(
         {
-            activity_from_date => "$activity_date $from:00:00",
-            activity_to_date   => "$activity_date $to:00:00",
+            activity_from_date => "$activity_date $from:00",
+            activity_to_date   => "$activity_date $to:00",
             need_1365          => $need_1365,
             org_username       => $org_username,
             period             => $period,
@@ -346,8 +346,11 @@ sub update_status {
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
 
-        my $text = sprintf "%s on %s %s %s%s-%s%s", $volunteer->name, $from->month_name, $from->day, $from->hour_12,
-            $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        my $text
+            = sprintf( "%s on %s-%s", $volunteer->name, $from->strftime('%B %d %I:%M%P'), $to->strftime('%I:%M%P') );
+
+        $self->log->debug("QuickAdd: $text");
+
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
@@ -481,7 +484,7 @@ sub _validate_volunteer {
 sub _validate_volunteer_work {
     my ( $self, $v ) = @_;
 
-    $v->required('activity-datetime')->like(qr/^\d{4}-\d{2}-\d{2} \d{2}-\d{2}$/);
+    $v->required('activity-datetime')->like(qr/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}-\d{2}:\d{2}$/);
     $v->optional('need_1365');
     $v->optional('org_username');
     $v->optional('org_region');
@@ -520,10 +523,12 @@ sub _able_hour {
     my $max_volunteers = $self->config->{max_volunteers};
 
     my %result;
-    my @templates = qw/10-11 10-12 10-13 14-18 10-16 10-17 10-18/;
+    my @templates = qw/10:00-11:00 10:00-12:30 10:00-12:30 14:00-18:00 10:00-16:00 10:00-17:00 10:00-18:00/;
     for my $template (@templates) {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;
+        $start = substr $start, 0, 2;
+        $end   = substr $start, 0, 2;
         for my $hour ( $start .. $end ) {
             my $max
                 = defined $max_volunteers->{$dow}{$hour} ? $max_volunteers->{$dow}{$hour} : $max_volunteers->{default};
