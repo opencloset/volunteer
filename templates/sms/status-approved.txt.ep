@@ -1,7 +1,7 @@
 % my $v    = $work->volunteer;
 % my $from = $work->activity_from_date;
 % my $to   = $work->activity_to_date;
-<%= $v->name %>님이 <%= $from->month %>월 <%= $from->day%>일 <%= $from->strftime('%H:%M') %>~<%= $to->strftime('%H:%M') %>시에 신청하신 봉사활동이 승인되었습니다.
+<%= $v->name %>님이 <%= $from->month %>월 <%= $from->day%>일 <%= $from->strftime('%H:%M') %>~<%= $to->strftime('%H:%M') %> 에 신청하신 봉사활동이 승인되었습니다.
 
 신청한 봉사일에 방문할 수 없는 경우, 신청한 봉사활동을 취소하려면 다음의 <%= url_for('work.cancel', { id => $work->id })->query(phone => substr($v->phone, -4))->to_abs %> 을 눌러 취소해주세요. 봉사취소는 봉사 신청일 하루 전까지만 가능합니다. 봉사 신청 후 미방문하는 경우, 결원으로 인한 운영상의 어려움이 발생합니다. 미방문시에는 꼭! 봉사신청을 취소해주세요.
 
