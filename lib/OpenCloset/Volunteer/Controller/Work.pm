@@ -484,7 +484,7 @@ sub _validate_volunteer {
 sub _validate_volunteer_work {
     my ( $self, $v ) = @_;
 
-    $v->required('activity-datetime')->like(qr/^\d{4}-\d{2}-\d{2} \d{2}-\d{2}$/);
+    $v->required('activity-datetime')->like(qr/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}-\d{2}:\d{2}$/);
     $v->optional('need_1365');
     $v->optional('org_username');
     $v->optional('org_region');
@@ -523,10 +523,12 @@ sub _able_hour {
     my $max_volunteers = $self->config->{max_volunteers};
 
     my %result;
-    my @templates = qw/10-11 10-12 10-13 14-18 10-16 10-17 10-18/;
+    my @templates = qw/10:00-11:00 10:00-12:30 10:00-12:30 14:00-18:00 10:00-16:00 10:00-17:00 10:00-18:00/;
     for my $template (@templates) {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;
+        $start = substr $start, 0, 2;
+        $end   = substr $start, 0, 2;
         for my $hour ( $start .. $end ) {
             my $max
                 = defined $max_volunteers->{$dow}{$hour} ? $max_volunteers->{$dow}{$hour} : $max_volunteers->{default};
