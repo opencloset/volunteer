@@ -31,12 +31,13 @@ sub register {
     my ( $self, $app, $conf ) = @_;
 
     $app->helper( log => sub { shift->app->log } );
-    $app->helper( error        => \&error );
-    $app->helper( auth_google  => \&auth_google );
-    $app->helper( quickAdd     => \&quickAdd );
-    $app->helper( delete_event => \&delete_event );
-    $app->helper( send_mail    => \&send_mail );
-    $app->helper( phone_format => \&phone_format );
+    $app->helper( error           => \&error );
+    $app->helper( auth_google     => \&auth_google );
+    $app->helper( quickAdd        => \&quickAdd );
+    $app->helper( calendar_insert => \&calendar_insert );
+    $app->helper( delete_event    => \&delete_event );
+    $app->helper( send_mail       => \&send_mail );
+    $app->helper( phone_format    => \&phone_format );
 }
 
 =head2 error( $status, $error )
@@ -173,6 +174,57 @@ sub quickAdd {
         "$url",
         { text    => $text },
         { headers => { authorization => "$token->{token_type} $token->{access_token}" } }
+    );
+
+    unless ( $res->{success} ) {
+        $self->log->error("Failed to posting a new calendar event");
+        $self->log->error("$res->{status}: $res->{reason}\n$res->{content}\n");
+        return;
+    }
+
+    $self->log->debug("Added an event successfully");
+    return decode_json( $res->{content} )->{id};
+}
+
+=head2 calendar_insert( $name, $from, $to )
+
+C<$from> and C<$to> are L<DateTime> object.
+
+=cut
+
+sub calendar_insert {
+    my ( $self, $name, $from, $to ) = @_;
+
+    my $time  = time;
+    my $token = $self->session('token');
+    if ( !$token || $token->{exp} < $time ) {
+        my $is_auth = $self->auth_google;
+        unless ($is_auth) {
+            $self->log->debug("Failed to add calendar event: Authorization failed");
+            return;
+        }
+
+        $token = $self->session('token');
+    }
+
+    my $body = {
+        summary => $name,
+        start   => { dateTime => $from->strftime('%FT%T%z'), timeZone => $from->time_zone->name, },
+        end     => { dateTime => $to->strftime('%FT%T%z'), timeZone => $to->time_zone->name, },
+    };
+
+    my $calendarId = $self->config->{google_calendar_id};
+    my $url        = "https://www.googleapis.com/calendar/v3/calendars/$calendarId/events";
+    my $http       = HTTP::Tiny->new;
+    my $res        = $http->post(
+        $url,
+        {
+            headers => {
+                authorization  => "$token->{token_type} $token->{access_token}",
+                "Content-Type" => "application/json",
+            },
+            content => encode_json($body),
+        }
     );
 
     unless ( $res->{success} ) {
