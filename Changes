@@ -3,6 +3,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.3.12] - Wed, 16 Aug 2017 16:04:07 +0900
+
+### Added
+- calendar_insert helper
+
+### Chaned
+- quickAdd 대신에 calendar_insert 를 사용해서 캘린더 이벤트를 등록
+
 ## [v0.3.11] - Wed, 16 Aug 2017 15:12:44 +0900
 
 ### Fixed
