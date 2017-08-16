@@ -115,8 +115,8 @@ sub create {
         my $work = $self->schema->resultset('VolunteerWork')->create(
             {
                 volunteer_id       => $volunteer->id,
-                activity_from_date => "$date $from",
-                activity_to_date   => "$date $to",
+                activity_from_date => "$date $from:00",
+                activity_to_date   => "$date $to:00",
                 need_1365          => $need_1365,
                 org_username       => $org_username,
                 org_region         => $org_region,
@@ -282,8 +282,8 @@ sub update {
 
     $work->update(
         {
-            activity_from_date => "$activity_date $from",
-            activity_to_date   => "$activity_date $to",
+            activity_from_date => "$activity_date $from:00",
+            activity_to_date   => "$activity_date $to:00",
             need_1365          => $need_1365,
             org_username       => $org_username,
             period             => $period,
