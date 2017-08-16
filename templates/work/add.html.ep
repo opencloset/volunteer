@@ -70,9 +70,9 @@
           <div class="form-group">
             <select name="activity-hours" class="form-control input-lg" tabindex="7" required>
               <option>활동시간을 선택해주세요</option>
-              <option value="10-13">10시 ~ 12시 30분 2시간 30분</option>
-              <option value="14-18">14시 ~ 18시 4시간</option>
-              <option value="10-18">10시 ~ 18시 6시간 30분</option>
+              <option value="10:00-12:30">10시 ~ 12시 30분 2시간 30분</option>
+              <option value="14:00-18:00">14시 ~ 18시 4시간</option>
+              <option value="10:00-18:00">10시 ~ 18시 6시간 30분</option>
             </select>
             <div class="help-block">
               봉사 신청은 복수로 가능합니다.

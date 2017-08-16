@@ -3,6 +3,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.3.9] - Wed, 16 Aug 2017 12:11:14 +0900
+
+### Changed
+- 봉사활동 시간변경 (#102)
+  - 활동 시간을 시간 단위가 아닌 분단위까지 고려
+  - 문자 메세지 및 구글캘린더에 분단위 까지 표시
+
 ## [v0.3.8] - Wed, 09 Aug 2017 15:49:00 +0900
 
 ### Changed
