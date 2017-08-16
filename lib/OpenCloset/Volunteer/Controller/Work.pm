@@ -298,16 +298,9 @@ sub update {
 
     if ( $work->event_id ) {
         $self->delete_event( $work->event_id );
-        my $from = $work->activity_from_date;
-        my $to   = $work->activity_to_date;
-        my $text = sprintf(
-            "%s from %s to %s on %s",
-            $volunteer->name,
-            $from->strftime('%I:%M%P'),
-            $to->strftime('%I:%M%P'),
-            $from->strftime('%B %d')
-        );
-        my $event_id = $self->quickAdd("$text");
+        my $from     = $work->activity_from_date;
+        my $to       = $work->activity_to_date;
+        my $event_id = $self->calendar_insert( $volunteer->name, $from, $to );
         $work->update( { event_id => $event_id } );
     }
 
@@ -349,18 +342,7 @@ sub update_status {
         my $volunteer = $work->volunteer;
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
-
-        my $text = sprintf(
-            "%s from %s to %s on %s",
-            $volunteer->name,
-            $from->strftime('%I:%M%P'),
-            $to->strftime('%I:%M%P'),
-            $from->strftime('%B %d')
-        );
-
-        $self->log->debug("QuickAdd: $text");
-
-        my $event_id = $self->quickAdd("$text");
+        my $event_id  = $self->calendar_insert( $volunteer->name, $from, $to );
         $work->update( { event_id => $event_id } );
     }
     elsif ( $status =~ /canceled|drop/ ) {
