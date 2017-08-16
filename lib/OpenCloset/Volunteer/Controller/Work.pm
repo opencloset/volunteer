@@ -115,8 +115,8 @@ sub create {
         my $work = $self->schema->resultset('VolunteerWork')->create(
             {
                 volunteer_id       => $volunteer->id,
-                activity_from_date => "$date $from:00:00",
-                activity_to_date   => "$date $to:00:00",
+                activity_from_date => "$date $from",
+                activity_to_date   => "$date $to",
                 need_1365          => $need_1365,
                 org_username       => $org_username,
                 org_region         => $org_region,
@@ -132,7 +132,7 @@ sub create {
         );
 
         return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
-        push @added, $dt->day;
+        push @added, sprintf( '%d월 %d일', $dt->month, $dt->day );
     }
 
     my $msg = $self->render_to_string( 'sms/status-reported', format => 'txt', name => $name, dates => \@added );
@@ -282,8 +282,8 @@ sub update {
 
     $work->update(
         {
-            activity_from_date => "$activity_date $from:00:00",
-            activity_to_date   => "$activity_date $to:00:00",
+            activity_from_date => "$activity_date $from",
+            activity_to_date   => "$activity_date $to",
             need_1365          => $need_1365,
             org_username       => $org_username,
             period             => $period,
@@ -346,8 +346,11 @@ sub update_status {
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
 
-        my $text = sprintf "%s on %s %s %s%s-%s%s", $volunteer->name, $from->month_name, $from->day, $from->hour_12,
-            $from->am_or_pm, $to->hour_12, $to->am_or_pm;
+        my $text
+            = sprintf( "%s on %s-%s", $volunteer->name, $from->strftime('%B %d %I:%M%P'), $to->strftime('%I:%M%P') );
+
+        $self->log->debug("QuickAdd: $text");
+
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
