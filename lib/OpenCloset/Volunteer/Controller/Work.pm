@@ -300,9 +300,13 @@ sub update {
         $self->delete_event( $work->event_id );
         my $from = $work->activity_from_date;
         my $to   = $work->activity_to_date;
-        my $text = sprintf "%s %s on %s %s %s%s-%s%s", $volunteer->name, $work->activity, $from->month_name,
-            $from->day, $from->hour_12, $from->am_or_pm, $to->hour_12, $to->am_or_pm;
-        $self->log->debug($text);
+        my $text = sprintf(
+            "%s on from %s to %s on %s",
+            $volunteer->name,
+            $from->strftime('%I:%M%P'),
+            $to->strftime('%I:%M%P'),
+            $from->strftime('%B %d')
+        );
         my $event_id = $self->quickAdd("$text");
         $work->update( { event_id => $event_id } );
     }
@@ -346,8 +350,13 @@ sub update_status {
         my $from      = $work->activity_from_date;
         my $to        = $work->activity_to_date;
 
-        my $text
-            = sprintf( "%s on %s-%s", $volunteer->name, $from->strftime('%B %d %I:%M%P'), $to->strftime('%I:%M%P') );
+        my $text = sprintf(
+            "%s on from %s to %s on %s",
+            $volunteer->name,
+            $from->strftime('%I:%M%P'),
+            $to->strftime('%I:%M%P'),
+            $from->strftime('%B %d')
+        );
 
         $self->log->debug("QuickAdd: $text");
 
