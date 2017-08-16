@@ -301,7 +301,7 @@ sub update {
         my $from = $work->activity_from_date;
         my $to   = $work->activity_to_date;
         my $text = sprintf(
-            "%s on from %s to %s on %s",
+            "%s from %s to %s on %s",
             $volunteer->name,
             $from->strftime('%I:%M%P'),
             $to->strftime('%I:%M%P'),
@@ -351,7 +351,7 @@ sub update_status {
         my $to        = $work->activity_to_date;
 
         my $text = sprintf(
-            "%s on from %s to %s on %s",
+            "%s from %s to %s on %s",
             $volunteer->name,
             $from->strftime('%I:%M%P'),
             $to->strftime('%I:%M%P'),

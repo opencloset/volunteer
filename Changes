@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.3.11] - Wed, 16 Aug 2017 15:12:44 +0900
+
+### Fixed
+- Fix typo at google calendar quickadd text
+
 ## [v0.3.10] - Wed, 16 Aug 2017 15:05:49 +0900
 
 ### Changed
