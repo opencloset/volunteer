@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- 첫 소개화면 이미지 변경 (#103)
+
 ## [v0.3.12] - Wed, 16 Aug 2017 16:04:07 +0900
 
 ### Added
