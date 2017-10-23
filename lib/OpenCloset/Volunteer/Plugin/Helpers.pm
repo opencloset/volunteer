@@ -292,7 +292,9 @@ sub send_mail {
     my ( $self, $email ) = @_;
     return unless $email;
 
-    my $transport = Email::Sender::Transport::SMTP->new( { host => 'localhost' } );
+    my $config = $self->config;
+    my $transport
+        = Email::Sender::Transport::SMTP->new( { host => $config->{smtp}{host}, port => $config->{smtp}{port}, } );
     sendmail( $email, { transport => $transport } );
 }
 
