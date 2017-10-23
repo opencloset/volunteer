@@ -4,6 +4,7 @@ use Mojo::Base 'Mojolicious';
 use Email::Valid ();
 use HTTP::Body::Builder::MultiPart;
 use HTTP::Tiny;
+use Path::Tiny;
 use Try::Tiny;
 
 use OpenCloset::Schema;
