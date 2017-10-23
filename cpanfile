@@ -1,5 +1,4 @@
 requires 'Config::INI::Reader';
-requires 'Crypt::OpenSSL::RSA';
 requires 'Data::Pageset';
 requires 'Date::Holidays::KR';
 requires 'DateTime::Format::ISO8601';
@@ -15,7 +14,6 @@ requires 'JSON::WebToken';
 requires 'Minion';
 requires 'Minion::Backend::SQLite';
 requires 'Mojo::SQLite', '2.002';
-requires 'Mojolicious::Plugin::AssetPack';
 requires 'Path::Tiny';
 requires 'String::Random';
 requires 'Try::Tiny';
