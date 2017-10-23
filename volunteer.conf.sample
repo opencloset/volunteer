@@ -1,10 +1,12 @@
 #!/usr/bin/env perl
+my $PORT              = $ENV{PORT} || 5000;
 my $SMS_FROM          = '0269291029';
 my $info_address      = 'info@theopencloset.net';
 my $volunteer_address = 'volunteer@theopencloset.net';
 
 {
-    database => {
+    hypnotoad => { listen => ["http://*:$PORT"] },
+    database  => {
         dsn  => $ENV{OPENCLOSET_DATABASE_DSN}  || "dbi:mysql:opencloset:127.0.0.1",
         name => $ENV{OPENCLOSET_DATABASE_NAME} || 'opencloset',
         user => $ENV{OPENCLOSET_DATABASE_USER} || 'opencloset',
@@ -35,7 +37,7 @@ my $volunteer_address = 'volunteer@theopencloset.net';
     secrets       => [$ENV{OPENCLOSET_SECRET}],
     cookie_domain => $ENV{OPENCLOSET_DOMAIN} || 'localhost' || '.theopencloset.net',
 
-    google_private_key          => 'google-private-key.json',
+    google_private_key          => './google-private-key.json',
     google_calendar_id          => $volunteer_address,
     email_notify_from           => $volunteer_address,
     email_notify_to             => $info_address,
@@ -44,12 +46,16 @@ my $volunteer_address = 'volunteer@theopencloset.net';
 
     # Monday is 1 ~ Sunday is 7
     max_volunteers => {
-        default => 4,  # 모든 경우에 사용됨(요일/시간대가 지정되어 있지 않다면 default를 사용)
+        default => 3,  # 모든 경우에 사용됨(요일/시간대가 지정되어 있지 않다면 default를 사용)
         7       => {   # Sun
-            14 => 2,    # 일요일 14시는 2명
+            10 => 3,    # 10시는 3명
+            11 => 3,
+            12 => 3,
+            13 => 3,
+            14 => 3,
         },
     },
-    minion  => { SQLite => 'sqlite:minion.db' },
+    minion  => { SQLite => 'sqlite:db/minion.db' },
     oavatar => {
         token => $ENV{OPENCLOSET_AVATAR_TOKEN} || 's3cr3t',
         url   => $ENV{OPENCLOSET_AVATAR_URL}   || 'https://avatar.theopencloset.net/avatar',
