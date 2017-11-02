@@ -4,10 +4,12 @@ use Mojo::Base 'Mojolicious';
 use Email::Valid ();
 use HTTP::Body::Builder::MultiPart;
 use HTTP::Tiny;
+use Path::Tiny;
+use Try::Tiny;
 
 use OpenCloset::Schema;
 
-use version; our $VERSION = qv("v0.3.13");
+use version; our $VERSION = qv("v0.4.0");
 
 has schema => sub {
     my $self = shift;
@@ -129,7 +131,12 @@ sub _add_task {
                 $app->log->info("Photo uploaded: $res->{headers}{location}");
             }
 
-            $img->remove;
+            try {
+                path($img)->remove;
+            }
+            catch {
+                $app->log->error("Failed to remove tempfile: $_");
+            };
         }
     );
 }

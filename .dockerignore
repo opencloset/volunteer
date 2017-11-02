@@ -1,0 +1,6 @@
+*.db
+.git
+log
+node_modules
+public/components
+run

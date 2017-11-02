@@ -26,3 +26,8 @@
 
 google private key 는 암호화된 JSON Web Token 파일입니다.
 자세한 내용은 [Service Account](https://developers.google.com/identity/protocols/OAuth2ServiceAccount)를 참고.
+
+## Build docker images ##
+
+    $ docker build -f Dockerfile -t opencloset/volunteer .
+    $ docker build -f Dockerfile.minion -t opencloset/volunteer/minion .

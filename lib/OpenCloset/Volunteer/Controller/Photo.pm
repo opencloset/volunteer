@@ -28,7 +28,7 @@ sub create {
     my $photo = $v->param('photo');
 
     if ( $photo->size ) {
-        my $temp = Path::Tiny->tempfile( UNLINK => 0 );
+        my $temp = Path::Tiny->tempfile( UNLINK => 0, DIR => './db' );
         $photo->move_to("$temp");
         $self->minion->enqueue( upload_photo => [$key, $temp] );
     }

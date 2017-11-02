@@ -1,0 +1,22 @@
+FROM opencloset/perl:latest
+
+RUN groupadd opencloset && useradd -g opencloset opencloset
+
+WORKDIR /tmp
+COPY cpanfile cpanfile
+RUN cpanm --notest \
+    --mirror http://www.cpan.org \
+    --mirror http://cpan.theopencloset.net \
+    --installdeps .
+
+# Everything up to cached.
+WORKDIR /home/opencloset/service/volunteer.theopencloset.net
+COPY . .
+RUN mkdir db
+RUN chown -R opencloset:opencloset .
+
+USER opencloset
+ENV MOJO_HOME=/home/opencloset/service/volunteer.theopencloset.net
+ENV MOJO_CONFIG=volunteer.conf
+
+ENTRYPOINT ["./script/volunteer", "minion", "worker"]
