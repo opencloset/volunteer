@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.4.1] - Tue, 14 Nov 2017 17:14:51 +0900
+
+### Fixed
+- 일별 봉사신청가능시간 버그 수정 (#106)
+
 ## [v0.4.0] - Thu, 02 Nov 2017 16:52:46 +0900
 
 ### Added
