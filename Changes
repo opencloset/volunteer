@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.4.2] - Tue, 23 Jan 2018 12:24:07 +0900
+
+### Changed
+- 열린옷장 위치안내 SMS 수정 (#72)
+
 ## [v0.4.1] - Tue, 14 Nov 2017 17:14:51 +0900
 
 ### Fixed
