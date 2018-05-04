@@ -1,5 +1,7 @@
 # 열린옷장 자원봉사 #
 
+[![Build Status](https://travis-ci.org/opencloset/volunteer.svg?branch=v0.4.2)](https://travis-ci.org/opencloset/volunteer)
+
 열린옷장의 자원봉사에 관한 서비스입니다.
 
 # 설치 및 실행 #
