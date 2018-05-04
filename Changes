@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+## [v0.4.4] - Fri, 04 May 2018 16:00:44 +0900
+
+### Changed
+- docker image 에서 private key file 을 제거(대신에 bind mount 를 사용)
+
 ## [v0.4.3] - Fri, 04 May 2018 15:36:45 +0900
 
 ### Added

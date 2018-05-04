@@ -34,7 +34,6 @@ RUN cpanm --notest \
 WORKDIR /home/opencloset/service/volunteer.theopencloset.net
 COPY --from=builder /build .
 # explicit copy
-COPY google-private-key.json google-private-key.json
 COPY . .
 RUN mkdir db
 RUN chown -R opencloset:opencloset .
