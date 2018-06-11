@@ -119,15 +119,21 @@ sub auth_google {
         iat   => $time,
     };
 
-    my $jwt  = encode_jwt $claim_set, $private_key_string, 'RS256', { typ => 'JWT' };
+    my $jwt = encode_jwt $claim_set, $private_key_string, 'RS256', { typ => 'JWT' };
     my $http = HTTP::Tiny->new;
-    my $res  = $http->post_form( "https://www.googleapis.com/oauth2/v3/token",
-        { grant_type => 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion => $jwt } );
-    unless ( $res->{success} ) {
+
+    my $retry = 0;
+    my $res;
+    while ( $retry++ < 3 ) {
+        $res = $http->post_form( "https://www.googleapis.com/oauth2/v3/token",
+            { grant_type => 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion => $jwt } );
+
+        last if $res->{success};
         $self->log->error("Google Authorization Failed");
         $self->log->error("$res->{status}: $res->{reason}\n$res->{content}\n");
-        return;
     }
+
+    return unless $res->{success};
 
     my $token = try {
         decode_json( $res->{content} );
