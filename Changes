@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
 
+### Changed
+- Google API 인증 실패시 3번까지 재시도 (#109)
+
 ## [v0.4.5] - Fri, 04 May 2018 21:02:48 +0900
 
 ### Fixed
