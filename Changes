@@ -2,6 +2,7 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+## [v0.4.8] - Wed, 17 Jul 2019 20:58:55 +0900
 ### Changed
 - 봉사활동 시간대 변경 (#113)
 
