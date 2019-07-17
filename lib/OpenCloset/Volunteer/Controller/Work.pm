@@ -514,7 +514,7 @@ sub _able_hour {
     my $max_volunteers = $self->config->{max_volunteers};
 
     my %result;
-    my @templates = qw/10:00-11:00 10:00-12:30 10:00-12:30 14:00-18:00 10:00-16:00 10:00-17:00 10:00-18:00/;
+    my @templates = qw/09:00-12:00 12:00-16:00 17:00-20:00 09:00-16:00/;
     for my $template (@templates) {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;
