@@ -46,13 +46,18 @@ my $volunteer_address = 'volunteer@theopencloset.net';
 
     # Monday is 1 ~ Sunday is 7
     max_volunteers => {
-        default => 3,  # 모든 경우에 사용됨(요일/시간대가 지정되어 있지 않다면 default를 사용)
-        7       => {   # Sun
-            10 => 3,    # 10시는 3명
-            11 => 3,
-            12 => 3,
-            13 => 3,
-            14 => 3,
+        default => 1,  # 모든 경우에 사용됨(요일/시간대가 지정되어 있지 않다면 default를 사용)
+        6 => {   # Sat
+            17 => 0,
+            18 => 0,
+            19 => 0,
+            20 => 0,
+        },
+        7 => {   # Sun
+            17 => 0,
+            18 => 0,
+            19 => 0,
+            20 => 0,
         },
     },
     minion  => { SQLite => 'sqlite:db/minion.db' },
