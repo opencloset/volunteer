@@ -523,7 +523,7 @@ sub _able_hour {
         for my $hour ( $start .. $end ) {
             my $max
                 = defined $max_volunteers->{$dow}{$hour} ? $max_volunteers->{$dow}{$hour} : $max_volunteers->{default};
-            if ( $schedule{$hour} && $schedule{$hour} >= $max ) {
+            if ( $max == 0 || $schedule{$hour} && $schedule{$hour} >= $max ) {
                 $able = 0;
                 last;
             }
