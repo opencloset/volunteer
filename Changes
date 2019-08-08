@@ -2,6 +2,10 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+## [v0.4.9] - Thu, 08 Aug 2019 19:12:57 +0900
+### Fixed
+- 최대봉사인원이 0 일때를 고려함 (#113)
+
 ## [v0.4.8] - Wed, 17 Jul 2019 20:58:55 +0900
 ### Changed
 - 봉사활동 시간대 변경 (#113)
