@@ -520,6 +520,7 @@ sub _able_hour {
         my ( $start, $end ) = split /-/, $template;
         $start = substr $start, 0, 2;
         $end   = substr $end,   0, 2;
+        $end -= 1;
         for my $hour ( $start .. $end ) {
             my $max
                 = defined $max_volunteers->{$dow}{$hour} ? $max_volunteers->{$dow}{$hour} : $max_volunteers->{default};
