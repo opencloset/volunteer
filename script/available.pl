@@ -7,7 +7,7 @@ use OpenCloset::Schema;
 use DateTime;
 use Data::Dump;
 
-my $config = require 'volunteer.conf';
+my $config = require './volunteer.conf';
 my $conf   = $config->{database};
 
 our $MAX_VOLUNTEERS = 6;
@@ -52,6 +52,7 @@ sub run {
         my ( $start, $end ) = split /-/, $template;
         $start = substr $start, 0, 2;
         $end   = substr $end,   0, 2;
+        $end -= 1;
         for my $hour ( $start .. $end ) {
             my $max
                 = defined $max_volunteers->{$dow}{$hour} ? $max_volunteers->{$dow}{$hour} : $max_volunteers->{default};
