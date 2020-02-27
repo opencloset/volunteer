@@ -2,6 +2,10 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+## [v0.4.11] - Thu, 27 Feb 2020 21:31:44 +0900
+### Changed
+- 봉사활동 시간대에서 09-16 을 제거 (#114)
+
 ## [v0.4.10] - Mon, 11 Nov 2019 23:11:37 +0900
 ### Fixed
 - 봉사활동 시간대 오류 수정 (#113)
