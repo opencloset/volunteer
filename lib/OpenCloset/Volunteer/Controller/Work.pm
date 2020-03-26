@@ -507,6 +507,9 @@ sub _able_hour {
     while ( my $row = $rs->next ) {
         my $from = $row->activity_from_date;
         my $to   = $row->activity_to_date;
+        ## 09 ~ 12 로 신청했을때,
+        ## 09:00 ~ 11:59 로 변경해야 시간대별로 계산하기 수월함
+        $to->subtract(minutes => 1);
         $schedule{$_}++ for ( $from->hour .. $to->hour );
     }
 
