@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Fixed
+- ~12, 12~ 와 같은 중첩된 시간대를 구분할 수 있도록 함 (#116)
+
 ## [v0.4.11] - Thu, 27 Feb 2020 21:31:44 +0900
 ### Changed
 - 봉사활동 시간대에서 09-16 을 제거 (#114)
