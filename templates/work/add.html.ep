@@ -16,35 +16,12 @@
       <hr class="colorgraph">
 
       <div class="form-group">
-        % for my $gender ('male', 'female') {
-          <label class="radio-inline">
-            <input type="radio" name="gender" value="<%= $gender %>" required>
-            %= $gender eq 'male' ? '남' : '여'
-            <i class="fa fa-<%= $gender %> <%= $gender %>"></i>
-          </label>
-        % }
-        <div class="help-block with-errors"></div>
-      </div>
-
-      <div class="form-group">
         <input type="text" name="name" class="form-control input-lg" placeholder="이름 Name" tabindex="1" required>
         <div class="help-block with-errors"></div>
       </div>
 
       <div class="form-group">
-        <input type="email" name="email" class="form-control input-lg" placeholder="이메일 Email Address" tabindex="2" required>
-        <div class="help-block with-errors"></div>
-      </div>
-      <div class="form-group">
-        <input type="text" name="birth_date" class="form-control input-lg" placeholder="생년월일 ex) 1988-12-04" tabindex="3" required data-highteen="1">
-        <div class="help-block with-errors"></div>
-      </div>
-      <div class="form-group">
         <input type="text" name="phone" class="form-control input-lg" placeholder="전화번호 Phone Number" tabindex="4" required>
-        <div class="help-block with-errors"></div>
-      </div>
-      <div class="form-group">
-        <input type="text" name="address" class="form-control input-lg" placeholder="주소 Address" tabindex="5" required>
         <div class="help-block with-errors"></div>
       </div>
       <div class="row">
@@ -71,9 +48,8 @@
             <select name="activity-hours" class="form-control input-lg" tabindex="7" required>
               <option>활동시간을 선택해주세요</option>
               <option value="09:00-12:00">09시 ~ 12시 3시간</option>
-              <option value="12:00-16:00">12시 ~ 16시 4시간</option>
+              <option value="14:00-17:00">14시 ~ 17시 3시간</option>
               <option value="17:00-20:00">17시 ~ 20시 3시간</option>
-              <option value="09:00-16:00">09시 ~ 16시 6시간</option>
             </select>
             <div class="help-block">
               봉사 신청은 복수로 가능합니다.
@@ -93,122 +69,6 @@
         <p class="help-block">
           열린옷장 봉사활동 캘린더입니다. 일정을 참고해주세요.
         </p>
-      </div>
-
-      <hr class="colorgraph">
-
-      <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
-            <p class="help-block">
-              1365 승인이 필요하십니까?<br>
-              <small>
-                1365 승인은 봉사활동일 기준 1개월 이내이어야 합니다.
-              </small>
-            </p>
-          </div>
-          <div class="form-group">
-            <label class="radio-inline">
-              <input type="radio" name="need_1365" value="1"> 네
-            </label>
-            <label class="radio-inline">
-              <input type="radio" name="need_1365" value="0"> 아니오
-            </label>
-          </div>
-        </div>
-
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
-            <p class="help-block">1365 승인이 필요하신 분은 1365 로그인 아이디를 적어주세요</p>
-          </div>
-          <input type="text" name="org_username" class="form-control" placeholder="1365 로그인 아이디">
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
-            <p class="help-block">열린옷장을 만나게 된 이유를 선택해주세요</p>
-          </div>
-          <div class="form-group">
-            % for my $reason ('봉사시간', '봉사활동에 관심 있어서', '열린옷장에 관심 있어서', '사회경험', '개인시간 활용', '1365 사이트', '기타') {
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="reason" value="<%= $reason %>">
-                %= $reason
-              </label>
-            </div>
-            % }
-          </div>
-        </div>
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
-            <p class="help-block">열린옷장 지원활동에 처음 접한 경로를 선택해주세요</p>
-          </div>
-          <div class="form-group">
-            % for my $path ('1365 사이트', '홈페이지 / 페이스북', '방송 신문 등의 기사', '행사 및 캠페인 참여', '열린옷장 방문 및 대여', '친구, 지인 추천', '기타') {
-            <div class="checkbox">
-              <label>
-                <input type="checkbox" name="path" value="<%= $path %>">
-                %= $path
-              </label>
-            </div>
-            % }
-          </div>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
-            <p class="help-block">열린옷장에서 얼마동안 활동하실 예정이신가요?</p>
-          </div>
-          <div class="form-group">
-            % for my $period ('1일', '1달 이내', '1달 이상', '1일 활동 후 정기적 참여') {
-            <div class="radio">
-              <label>
-                <input type="radio" name="period" value="<%= $period %>" required>
-                %= $period
-              </label>
-            </div>
-            % }
-            <div class="help-block with-errors"></div>
-          </div>
-        </div>
-
-        <div class="col-xs-6 col-sm-6 col-md-6">
-          <div class="form-group">
-            <p class="help-block">해당 직업에 선택해주세요</p>
-          </div>
-          <div class="form-group">
-            % for my $job ('중고등학생', '대학생 및 취업 준비생', '직장인', '재취업 및 휴직기', '주부') {
-            <div class="radio">
-              <label>
-                <input type="radio" name="job" value="<%= $job %>" required>
-                %= $job
-              </label>
-            </div>
-            % }
-            <div class="help-block with-errors"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <textarea name="talent" class="form-control input-lg" placeholder="그 이외에 열린옷장과 연관된 재능이 있다면 적어주세요 Describe Your Talent For Opencloset" tabindex="8"></textarea>
-      </div>
-
-      <div class="form-group">
-        <textarea name="comment" class="form-control input-lg" placeholder="열린옷장에서 활동에 대해 자유롭게 적어주세요 About Opencloset Activity" tabindex="9"></textarea>
-      </div>
-
-      <div class="form-group">
-        <div class="checkbox">
-          <label>
-            <input type="checkbox" name="" value="" required>
-            <a href="#agree-privacy" data-toggle="modal" class="agree">열린옷장 서비스 개인정보수집 &middot; 이용 &middot; 제공 동의서</a>
-          </label>
-        </div>
       </div>
 
       <hr class="colorgraph">

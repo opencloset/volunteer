@@ -52,25 +52,9 @@ sub create {
         return $self->error( 400, 'Parameter Validation Failed: ' . join( ', ', @$failed ) );
     }
 
-    my $name   = $v->param('name');
-    my $gender = $v->param('gender');
-
+    my $name = $v->param('name');
+    my $phone = $v->param('phone');
     my $activity_datetime = $v->every_param('activity-datetime');
-
-    my $email_addr   = $v->param('email');
-    my $birth_date   = $v->param('birth_date');
-    my $phone        = $v->param('phone');
-    my $address      = $v->param('address');
-    my $need_1365    = $v->param('need_1365');
-    my $org_username = $v->param('org_username');
-    my $org_region   = $v->param('org_region');
-    my $period       = $v->param('period');
-    my $talent       = $v->param('talent');
-    my $comment      = $v->param('comment');
-    my $activity     = $v->param('activity');
-    my $reasons      = $v->every_param('reason');
-    my $paths        = $v->every_param('path');
-    my $job          = $v->param('job');
 
     my @added;
     my $tz = $self->config->{timezone};
@@ -87,12 +71,8 @@ sub create {
 
         $volunteer = $self->schema->resultset('Volunteer')->find_or_create(
             {
-                name       => $name,
-                gender     => $gender,
-                email      => $email_addr,
-                phone      => $phone,
-                address    => $address,
-                birth_date => $birth_date
+                name  => $name,
+                phone => $phone,
             }
         );
 
@@ -106,7 +86,7 @@ sub create {
                     -between =>
                         [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
                 },
-                status => 'reported',
+                status => 'approved',
             }
         );
 
@@ -117,16 +97,7 @@ sub create {
                 volunteer_id       => $volunteer->id,
                 activity_from_date => "$date $from:00",
                 activity_to_date   => "$date $to:00",
-                need_1365          => $need_1365,
-                org_username       => $org_username,
-                org_region         => $org_region,
-                period             => $period,
-                reason             => join( '|', @$reasons ),
-                path               => join( '|', @$paths ),
-                job                => $job,
-                activity           => $activity,
-                talent             => $talent,
-                comment            => $comment,
+                status             => 'approved',
                 authcode           => String::Random->new->randregex('[a-zA-Z0-9]{32}')
             }
         );
@@ -139,18 +110,6 @@ sub create {
     $phone =~ s/-//g;
     $self->sms( $phone, $msg );
 
-    my $email = Email::Simple->create(
-        header => [
-            From => $self->config->{email_notify_from},
-            To   => $self->config->{email_notify_to},
-            Subject =>
-                sprintf( "[열린옷장 봉사활동 신청접수] %s님이 봉사활동을 신청하셨습니다.",
-                $name ),
-        ],
-        body => '--',
-    );
-
-    $self->send_mail( encode_utf8( $email->as_string ) );
     $self->render( 'work/done', volunteer => $volunteer, dates => \@added );
 }
 
@@ -465,26 +424,13 @@ sub _validate_volunteer {
     my ( $self, $v ) = @_;
 
     $v->required('name');
-    $v->required('gender');
-    $v->required('email');    # TODO: check valid email
-    $v->required('birth_date')->like(qr/^\d{4}-\d{2}-\d{2}$/);
     $v->required('phone')->like(qr/^\d{3}-\d{4}-\d{3,4}$/);
-    $v->required('address');
 }
 
 sub _validate_volunteer_work {
     my ( $self, $v ) = @_;
 
     $v->required('activity-datetime')->like(qr/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}-\d{2}:\d{2}$/);
-    $v->optional('need_1365');
-    $v->optional('org_username');
-    $v->optional('org_region');
-    $v->required('reason');
-    $v->required('path');
-    $v->required('job');
-    $v->required('period');
-    $v->optional('talent');
-    $v->optional('comment');
 }
 
 sub _able_hour {
@@ -517,7 +463,7 @@ sub _able_hour {
     my $max_volunteers = $self->config->{max_volunteers};
 
     my %result;
-    my @templates = qw/09:00-12:00 12:00-16:00 17:00-20:00/;
+    my @templates = qw/09:00-12:00 14:00-17:00 17:00-20:00/;
     for my $template (@templates) {
         my $able = 1;
         my ( $start, $end ) = split /-/, $template;
