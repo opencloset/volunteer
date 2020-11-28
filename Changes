@@ -2,6 +2,13 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+## [v0.4.13] - Sat, 28 Nov 2020 11:35:54 +0900
+### Changed
+- 신청 간소화 (#120)
+  - staff 이 대행
+  - 신청 -> 승인 절차 대신에 바로 승인
+- 활동시간 변경 (#120)
+
 ## [v0.4.12] - Thu, 26 Mar 2020 20:25:12 +0900
 ### Fixed
 - ~12, 12~ 와 같은 중첩된 시간대를 구분할 수 있도록 함 (#116)

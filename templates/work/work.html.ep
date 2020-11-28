@@ -55,7 +55,7 @@
             </h4>
           </dd>
           <dd>
-            % my @reasons = split /\|/, $work->reason;
+            % my @reasons = split /\|/, $work->reason || '';
             <ul class="list-group">
               <li class="list-group-item text-center text-info">열린옷장을 만나게 된 이유</li>
               % for my $reason (@reasons) {
@@ -65,7 +65,7 @@
           </dd>
 
           <dd>
-            % my @paths = split /\|/, $work->path;
+            % my @paths = split /\|/, $work->path || '';
             <ul class="list-group">
               <li class="list-group-item text-center text-info">접한경로</li>
               % for my $path (@paths) {
