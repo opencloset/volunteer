@@ -103,6 +103,12 @@ sub create {
         );
 
         return $self->error( 500, 'Failed to create Volunteer Work' ) unless $work;
+
+        ## Google Calendar
+        my $from_date = $work->activity_from_date;
+        my $to_date   = $work->activity_to_date;
+        my $event_id  = $self->calendar_insert( $volunteer->name, $from_date, $to_date );
+        $work->update( { event_id => $event_id } );
         push @added, sprintf( '%d월 %d일', $dt->month, $dt->day );
     }
 
