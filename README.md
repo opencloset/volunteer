@@ -1,6 +1,6 @@
 # 열린옷장 자원봉사 #
 
-[![Build Status](https://travis-ci.org/opencloset/volunteer.svg?branch=v0.4.13)](https://travis-ci.org/opencloset/volunteer)
+[![Build Status](https://travis-ci.org/opencloset/volunteer.svg?branch=v0.4.14)](https://travis-ci.org/opencloset/volunteer)
 
 열린옷장의 자원봉사에 관한 서비스입니다.
 
