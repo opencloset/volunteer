@@ -78,20 +78,6 @@ sub create {
 
         return $self->error( 500, 'Failed to find or create Volunteer' ) unless $volunteer;
 
-        my $parser = $self->schema->storage->datetime_parser;
-        my $rs     = $self->schema->resultset('VolunteerWork')->search(
-            {
-                volunteer_id       => $volunteer->id,
-                activity_from_date => {
-                    -between =>
-                        [$parser->format_datetime($dt), $parser->format_datetime( $dt->clone->add( days => 1 ) )]
-                },
-                status => 'approved',
-            }
-        );
-
-        return $self->error( 400, '같은날 두번 이상 신청할 수 없습니다' ) if $rs->count;
-
         my $work = $self->schema->resultset('VolunteerWork')->create(
             {
                 volunteer_id       => $volunteer->id,
