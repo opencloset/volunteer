@@ -2,6 +2,7 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+## [v0.4.15] - Mon, 30 Nov 2020 09:55:36 +0900
 ### Changed
 - 같은 날 여러번 신청 가능하게 함 (#120)
 
