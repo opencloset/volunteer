@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Changed
+- 같은 날 여러번 신청 가능하게 함 (#120)
+
 ## [v0.4.14] - Sun, 29 Nov 2020 10:02:17 +0900
 ### Fixed
 - 승인 이후에 google calendar 에 스케쥴 등록 (#120)
