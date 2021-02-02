@@ -1,3 +1,7 @@
+
+    $ grunt
+    $ cp closed.sample closed # 샘플 설정 파일 복사
+
 v0.4.15
 v0.4.14
 v0.4.13
