@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- 자원봉사 신청을 제한함 (#124)
+
 ## [v0.4.15] - Mon, 30 Nov 2020 09:55:36 +0900
 ### Changed
 - 같은 날 여러번 신청 가능하게 함 (#120)

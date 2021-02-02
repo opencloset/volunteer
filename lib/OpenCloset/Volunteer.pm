@@ -59,9 +59,10 @@ sub _public_routes {
     $r->get('/')->to('root#home')->name('home');
 
     my $works = $r->under('/works');
-    $works->get('/new')->to('work#add')->name('work.add');
-    $works->post('/')->to('work#create');
-    $works->get('/hours/:ymd')->to('work#able_hour');
+    my $closed = $works->under('/')->to('root#closed');
+    $closed->get('/new')->to('work#add')->name('work.add');
+    $closed->post('/')->to('work#create');
+    $closed->get('/hours/:ymd')->to('work#able_hour');
 
     my $work = $works->under('/:id')->to('work#find_work');
     $work->get('/')->to('work#work')->name('work');
